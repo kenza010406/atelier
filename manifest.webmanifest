@@ -1,14 +1,14 @@
 {
- "name": "Atelier Bouclé",
- "short_name": "Atelier",
+ "name": "Onerom",
+ "short_name": "Onerom",
  "description": "Ma garde-robe : tenues selon le mood, coiffure bouclée, maquillage, bijoux.",
  "lang": "fr",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
  "orientation": "portrait",
- "background_color": "#F6F2F3",
- "theme_color": "#F6F2F3",
+ "background_color": "#F1F2F6",
+ "theme_color": "#F1F2F6",
  "icons": [
   {
    "src": "icon-192.png",
