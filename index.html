@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<title>Atelier Bouclé</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Atelier">
+<meta name="theme-color" content="#F6F2F3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..500&family=Jost:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : studio à trois panneaux (dressing | podium avec ma photo | mon look). Sur téléphone : podium puis look empilés, dressing sur sa propre page. Look unique, clair, verre dépoli + halos rose/lilas. */
+:root{
+  --paper:#F6F2F3;  /* perle froide */
+  --ink:#151215;    /* noir laqué */
+  --blush:#F4D7E1;  /* rose poudré */
+  --rose:#C46A89;   /* rose profond */
+  --lilac:#D7D0F4;  /* halo futuriste */
+  --gold:#A8875C;
+  --glass:rgba(255,255,255,.66);
+  --glass2:rgba(255,255,255,.86);
+  --line:#E3D9DE;
+  --muted:#776C73;
+  --white:#FFFFFF;
+  --good:#3F7D5B;
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-body:"Jost","Futura","Century Gothic","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.5;margin:0;color:var(--ink);
+  background:radial-gradient(900px 520px at 0% -8%,var(--blush),transparent 62%),radial-gradient(800px 480px at 100% 0%,var(--lilac),transparent 58%),var(--paper);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 calc(96px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent;min-height:100vh}
+.wrap{max-width:1360px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);font-weight:500;text-wrap:balance;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* En-tête */
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:16px 12px}
+.brand{font-family:var(--f-display);font-size:21px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;line-height:1.1}
+.brand .mono{display:block;letter-spacing:.24em;margin-top:3px}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--blush) center/cover;border:1px solid var(--ink);display:grid;place-items:center;font-family:var(--f-display);font-size:18px;flex:0 0 auto}
+
+/* Panneaux verre */
+.panel{background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:24px;padding:16px;min-width:0}
+.ph-title{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
+.ph-title h2{font-size:22px}
+
+/* Studio */
+.studio{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+.studio .left{display:none}
+@media(min-width:1060px){
+  .studio{grid-template-columns:290px minmax(0,1fr) 340px;align-items:start}
+  .studio .left{display:block;position:sticky;top:12px;max-height:calc(100vh - 120px);overflow:auto}
+  .studio .right{position:sticky;top:12px;max-height:calc(100vh - 120px);overflow:auto}
+}
+.moods{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.moods::-webkit-scrollbar{display:none}
+
+/* Puces & boutons */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid var(--line);background:var(--glass2);border-radius:999px;padding:7px 14px;font-size:13px;letter-spacing:.03em;transition:background .15s,color .15s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .n{font-family:var(--f-mono);font-size:10px;opacity:.6;margin-left:3px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:12px 20px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.pink{background:var(--blush);color:var(--ink);border-color:var(--rose)}
+.btn.small{padding:8px 13px;font-size:10.5px}
+.btn.wide{width:100%}
+.btn.danger{background:#8E2236;border-color:#8E2236;color:var(--white)}
+.btn[disabled]{opacity:.4;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Scène */
+.stage{position:relative;border-radius:28px;overflow:hidden;height:min(76vh,720px);min-height:470px;margin-top:10px;
+  background:linear-gradient(180deg,var(--white) 0%,var(--paper) 62%,#EAE2E8 100%);border:1px solid var(--line);perspective:900px}
+.stage::before{content:"";position:absolute;inset:auto 0 0 0;height:34%;opacity:.55;
+  background:repeating-linear-gradient(90deg,transparent 0 46px,var(--line) 46px 47px),repeating-linear-gradient(0deg,transparent 0 26px,var(--line) 26px 27px);
+  transform:rotateX(62deg);transform-origin:bottom;-webkit-mask-image:linear-gradient(0deg,#000,transparent);mask-image:linear-gradient(0deg,#000,transparent)}
+.podium{position:absolute;left:50%;bottom:3.5%;width:min(64%,340px);aspect-ratio:4/1;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(ellipse at 50% 35%,var(--white),#E6DEE4 72%);box-shadow:0 16px 28px rgba(21,18,21,.12),inset 0 -6px 12px rgba(21,18,21,.06)}
+.ring{position:absolute;left:50%;bottom:-4%;width:min(78%,420px);aspect-ratio:1;border-radius:50%;border:1px dashed var(--rose);opacity:.55;
+  transform:translateX(-50%) rotateX(78deg);animation:spin 40s linear infinite}
+@keyframes spin{to{transform:translateX(-50%) rotateX(78deg) rotate(360deg)}}
+.figure{position:absolute;left:50%;bottom:8.5%;height:84%;aspect-ratio:3/5;max-width:64%;transform:translateX(-50%)}
+.bodyimg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom center;pointer-events:none}
+.figure.mirror .bodyimg{transform:scaleX(-1)}
+.ghost-fig{position:absolute;inset:0;width:100%;height:100%}
+.ghost-fig path,.ghost-fig circle{fill:color-mix(in srgb,var(--white) 70%,transparent);stroke:var(--rose);stroke-width:1.2;stroke-dasharray:4 4}
+.wear{position:absolute;transform:translate(-50%,-50%);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;
+  filter:drop-shadow(0 4px 6px rgba(21,18,21,.18));max-width:none}
+.wear.sel{outline:1px dashed var(--rose);outline-offset:3px;cursor:grabbing}
+.stage.board .wear{display:none}
+.hud{position:absolute;z-index:3}
+.hud.tl{left:14px;top:14px;display:grid;gap:2px}
+.hud.tl b{font-family:var(--f-display);font-weight:500;font-size:22px;color:var(--ink);letter-spacing:0;text-transform:none;font-style:italic}
+.hud.bl{left:14px;bottom:14px}
+.meter{display:flex;align-items:center;gap:8px}
+.meter i{display:block;width:70px;height:3px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.meter i::after{content:"";position:absolute;inset:0;width:var(--v);background:linear-gradient(90deg,var(--rose),var(--lilac))}
+.rail{position:absolute;left:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:4}
+.rail button{width:40px;height:40px;border-radius:50%;background:var(--glass2);border:1px solid var(--line);display:grid;place-items:center;padding:0}
+.rail button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.rail svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5}
+.thumbs{position:absolute;right:12px;top:14px;bottom:14px;display:flex;flex-direction:column;gap:8px;overflow:auto;z-index:4;scrollbar-width:none;padding:2px}
+.thumbs::-webkit-scrollbar{display:none}
+.thumbs button{width:54px;height:54px;flex:0 0 auto;border-radius:14px;background:var(--glass2) center/contain no-repeat;border:1px solid var(--line);padding:0}
+.thumbs button[aria-pressed="true"]{border-color:var(--rose);box-shadow:0 0 0 2px var(--blush)}
+.ctl{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:5;display:flex;gap:6px;align-items:center;background:var(--glass2);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 14px;white-space:nowrap}
+.ctl button{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--white);padding:0;font-size:16px;line-height:1}
+.stage-empty{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:2;width:80%}
+@media(max-width:600px){.stage{min-height:440px;height:68vh}.figure{max-width:60%}.thumbs button{width:44px;height:44px;border-radius:12px}.rail button{width:36px;height:36px}}
+@media(prefers-reduced-motion:reduce){.ring{animation:none}.sheet{animation:none!important}}
+
+/* Panneau look */
+.lrow{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.lrow:last-child{border-bottom:0}
+.lrow .th{width:52px;height:52px;border-radius:12px;background:var(--white) center/contain no-repeat;border:1px solid var(--line)}
+.lrow .t{min-width:0}
+.lrow .t b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .t small{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid var(--line)}
+.ibtn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--white);padding:0;font-size:15px}
+.block{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.block h3{font-size:19px}
+.block p{margin:6px 0 0}
+.checks{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:7px}
+.checks li{display:flex;gap:9px;align-items:flex-start;font-size:13.5px}
+.checks li::before{content:"";flex:0 0 auto;width:15px;height:15px;margin-top:2px;border-radius:50%;border:1px solid var(--rose);background:radial-gradient(circle,var(--rose) 0 3px,transparent 3.5px)}
+.mk{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:7px}
+.mk li{display:flex;gap:10px;align-items:center;min-width:0}
+.mk .th{width:36px;height:36px;border-radius:10px;background:var(--white) center/contain no-repeat;border:1px solid var(--line);flex:0 0 auto}
+.mk .gen{border-style:dashed;display:grid;place-items:center;color:var(--muted)}
+.mk small{display:block;color:var(--muted);font-size:12px}
+.hair{background:linear-gradient(135deg,var(--blush),color-mix(in srgb,var(--lilac) 60%,var(--blush)));border-radius:18px;padding:14px;margin-top:14px}
+.reco{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-top:8px}
+.reco::-webkit-scrollbar{display:none}
+.reco button{flex:0 0 auto;width:84px;border:1px solid var(--line);border-radius:14px;background:var(--white);padding:6px;text-align:left}
+.reco .im{height:72px;background:center/contain no-repeat}
+.reco span{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+
+/* Dressing (grille épingles) */
+.search{width:100%;border:1px solid var(--line);background:var(--glass2);border-radius:999px;padding:10px 16px;margin-bottom:10px}
+.grid{columns:2;column-gap:10px;margin-top:12px}
+@media(min-width:640px){.page-dress .grid{columns:3}}
+@media(min-width:960px){.page-dress .grid{columns:4}}
+@media(min-width:1260px){.page-dress .grid{columns:5}}
+.pin{break-inside:avoid;margin:0 0 10px;border-radius:18px;overflow:hidden;position:relative;background:var(--white);display:block;width:100%;border:1px solid var(--line);padding:0;text-align:left}
+.pin img{display:block;width:100%;height:auto}
+.pin .cap{position:absolute;left:7px;right:7px;bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tag{background:color-mix(in srgb,var(--white) 88%,transparent);backdrop-filter:blur(6px);border-radius:999px;padding:3px 9px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;color:var(--ink)}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--white);flex:0 0 auto;box-shadow:0 0 0 1px var(--line)}
+.demo-badge{position:absolute;top:7px;left:7px;background:var(--ink);color:var(--paper);font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 7px;border-radius:999px}
+.try-badge{position:absolute;top:7px;right:7px;background:var(--blush);color:var(--ink);font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border-radius:999px}
+.banner{margin-top:12px;border:1px dashed var(--rose);background:var(--glass2);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:13px}
+.empty{text-align:center;padding:34px 16px;border:1px dashed var(--line);border-radius:22px;color:var(--muted)}
+.empty h3{color:var(--ink);font-size:21px;margin-bottom:6px}
+.page-title{font-size:clamp(30px,6vw,44px);font-style:italic}
+
+/* Navigation */
+nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--white) 80%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);
+  padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));display:flex;justify-content:space-around;align-items:center}
+@media(min-width:900px){nav.bar{left:50%;right:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);border:1px solid var(--line);border-radius:999px;padding:6px 18px;gap:10px;box-shadow:0 10px 30px rgba(21,18,21,.12)}}
+nav.bar button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:4px 8px;min-width:58px}
+nav.bar button[aria-current="page"]{color:var(--ink)}
+nav.bar svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.4}
+nav.bar .plus{width:52px;height:52px;border-radius:50%;background:var(--ink);display:grid;place-items:center;margin-top:-24px;box-shadow:0 6px 18px rgba(21,18,21,.25);border:3px solid var(--paper)}
+@media(min-width:900px){nav.bar .plus{margin-top:0;width:44px;height:44px}}
+nav.bar .plus svg{stroke:var(--paper);stroke-width:1.8}
+
+/* Feuilles */
+.sheet-bg{position:fixed;inset:0;background:rgba(21,18,21,.42);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--paper);width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:26px 26px 0 0;
+  padding:18px max(18px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));animation:up .25s ease}
+@media(min-width:700px){.sheet-bg{align-items:center}.sheet{border-radius:26px}}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.sheet .grab{width:44px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 14px}
+.sheet h2{font-size:26px}
+.field{display:grid;gap:6px;margin-top:16px}
+.field label,.field .lbl{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.field input[type=text],.field select{border:1px solid var(--line);background:var(--white);border-radius:14px;padding:11px 14px;width:100%}
+.preview{border-radius:20px;overflow:hidden;background:var(--white);max-height:44vh;display:grid;place-items:center;border:1px solid var(--line)}
+.preview img{max-height:44vh;width:auto;max-width:100%;display:block}
+.cam{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.cam label{border:1px solid var(--ink);border-radius:18px;padding:22px 10px;text-align:center;cursor:pointer;display:grid;gap:6px;justify-items:center;background:var(--white);font-size:13px;letter-spacing:.06em}
+.cam label.main{background:var(--ink);color:var(--paper)}
+.cam svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.4}
+.colorrow{display:flex;gap:12px;align-items:center}
+.colorrow input[type=color]{width:46px;height:46px;border:1px solid var(--line);border-radius:50%;padding:0;background:none;overflow:hidden}
+.toggle{display:flex;gap:10px;align-items:center;font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;font-size:13px;z-index:60;white-space:nowrap}
+
+/* Profil */
+.prof{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:860px){.prof{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.prof-photos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ph{aspect-ratio:3/4;max-width:100%;border-radius:20px;background:var(--white) center/contain no-repeat;border:1px dashed var(--rose);display:grid;place-items:center;text-align:center;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;position:relative;overflow:hidden}
+.ph.has{border-style:solid;border-color:var(--ink)}
+.ph.has span{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:var(--paper);padding:3px 10px;border-radius:999px;color:var(--ink)}
+.favs{columns:1;column-gap:12px}
+@media(min-width:640px){.favs{columns:2}}
+@media(min-width:1000px){.favs{columns:3}}
+.fav{break-inside:avoid;margin-bottom:12px}
+.fav .mini{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.fav .mini div{aspect-ratio:1;background:var(--white) center/contain no-repeat;border-radius:10px;border:1px solid var(--line)}
+.fav h3{font-size:19px;margin-top:10px}
+.fav p{margin:2px 0 8px;color:var(--muted);font-size:13px}
+.ai-pill{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:var(--glass2);color:var(--muted)}
+.ai-pill.on{color:var(--ink);border-color:var(--rose);background:linear-gradient(90deg,var(--blush),var(--lilac))}
+.job{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px 14px;flex-wrap:wrap}
+.job .bar,.meter.big i{display:block;flex:1;min-width:120px;height:4px;border-radius:4px;background:var(--line);position:relative;overflow:hidden}
+.job .bar::after,.meter.big i::after{content:"";position:absolute;inset:0;width:var(--v);background:linear-gradient(90deg,var(--rose),var(--lilac));transition:width .3s}
+.meter.big{margin-top:12px}.meter.big i{width:100%}
+.ph-blank{aspect-ratio:3/4;background:var(--pearl,#EFE8EC)}
+.demo-badge.rv{background:var(--rose);left:auto;right:7px}
+.chip.warn{border-color:var(--rose);color:#8E2D4E}
+.chip.warn[aria-pressed="true"]{background:var(--rose);color:var(--white);border-color:var(--rose)}
+.busy{display:flex;gap:12px;align-items:center;padding:30px 4px;color:var(--muted)}
+.spin{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--rose);animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.checker{background:repeating-conic-gradient(var(--white) 0 25%,#F1ECEF 0 50%) 0 0/20px 20px}
+.ai-guess{margin:10px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ai-guess .mono{background:var(--ink);color:var(--paper);padding:2px 8px;border-radius:999px}
+.panel p.ok{color:var(--good);margin:8px 0 0;font-weight:500}
+.panel p.err{color:#8E2236;margin:10px 0 0;font-size:13px}
+.panel>p{margin:8px 0 0}
+@media(prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<nav class="bar" aria-label="Navigation">
+  <button data-go="studio"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.3"/><path d="M8 21l1-8-2-4 5-1.5L17 9l-2 4 1 8M5 21.5h14"/></svg>Studio</button>
+  <button data-go="dressing"><svg viewBox="0 0 24 24"><path d="M12 6a2 2 0 1 1 2-2M12 6v2L3 15h18l-9-7"/></svg>Dressing</button>
+  <button data-go="add" aria-label="Ajouter une pièce"><span class="plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></button>
+  <button data-go="favoris"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Favoris</button>
+  <button data-go="profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Moi</button>
+</nav>
+<div id="layer"></div>
+
+<script type="text/plain" id="ai-src">
+import {env,AutoModel,AutoProcessor,AutoTokenizer,CLIPTextModelWithProjection,CLIPVisionModelWithProjection,RawImage,Tensor} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.1";
+env.allowLocalModels=false;
+const CLIP="Xenova/clip-vit-base-patch32";
+let rmbg,clipProc,clipVision,clipTok,clipText;
+const P=d=>self.postMessage({type:"progress",file:d.file,name:d.name,status:d.status,loaded:d.loaded,total:d.total});
+const O={device:"wasm",dtype:"q8",progress_callback:P};
+async function init(){
+  if(!rmbg)rmbg=await AutoModel.from_pretrained("briaai/RMBG-1.4",{...O,config:{model_type:"custom"}});
+  if(!clipProc)clipProc=await AutoProcessor.from_pretrained(CLIP,{progress_callback:P});
+  if(!clipVision)clipVision=await CLIPVisionModelWithProjection.from_pretrained(CLIP,O);
+  if(!clipTok)clipTok=await AutoTokenizer.from_pretrained(CLIP,{progress_callback:P});
+  if(!clipText)clipText=await CLIPTextModelWithProjection.from_pretrained(CLIP,O);
+  return true}
+function norm(a){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*a[i];s=Math.sqrt(s)||1;const o=new Float32Array(a.length);for(let i=0;i<a.length;i++)o[i]=a[i]/s;return o}
+/* Détourage : RMBG-1.4 en 1024×1024, masque remis à la taille de la photo, recadrage sur le sujet. */
+async function cut(blob){
+  const bm=await createImageBitmap(blob);const W=bm.width,H=bm.height,S=1024,N=S*S;
+  const c=new OffscreenCanvas(S,S),x=c.getContext("2d");x.drawImage(bm,0,0,S,S);const px=x.getImageData(0,0,S,S).data;
+  const f=new Float32Array(3*N);for(let i=0;i<N;i++){f[i]=px[i*4]/255-.5;f[N+i]=px[i*4+1]/255-.5;f[2*N+i]=px[i*4+2]/255-.5}
+  const out=await rmbg({input:new Tensor("float32",f,[1,3,S,S])});const m=(out.output||Object.values(out)[0]).data;
+  let mn=Infinity,mxv=-Infinity;for(let i=0;i<N;i++){if(m[i]<mn)mn=m[i];if(m[i]>mxv)mxv=m[i]}const rg=(mxv-mn)||1;
+  const mc=new OffscreenCanvas(S,S),mcx=mc.getContext("2d"),md=mcx.createImageData(S,S);
+  for(let i=0;i<N;i++)md.data[i*4+3]=Math.round((m[i]-mn)/rg*255);mcx.putImageData(md,0,0);
+  const oc=new OffscreenCanvas(W,H),ox=oc.getContext("2d");ox.drawImage(mc,0,0,W,H);const ma=ox.getImageData(0,0,W,H).data;
+  ox.clearRect(0,0,W,H);ox.drawImage(bm,0,0);const id=ox.getImageData(0,0,W,H),d=id.data;
+  let x0=W,y0=H,x1=-1,y1=-1,kept=0;
+  for(let y=0;y<H;y++)for(let X=0;X<W;X++){const k=(y*W+X)*4,a=ma[k+3];d[k+3]=a<12?0:a;if(a>40){kept++;if(X<x0)x0=X;if(X>x1)x1=X;if(y<y0)y0=y;if(y>y1)y1=y}}
+  if(x1<0||kept<W*H*.01)return{cut:null};
+  ox.putImageData(id,0,0);const cc=new OffscreenCanvas(x1-x0+1,y1-y0+1);cc.getContext("2d").drawImage(oc,-x0,-y0);
+  return{cut:await cc.convertToBlob({type:"image/png"})}}
+async function embedImage(blob){const im=await RawImage.fromBlob(blob);const inp=await clipProc(im);const{image_embeds}=await clipVision(inp);return norm(image_embeds.data)}
+async function embedText(texts){const ti=clipTok(texts,{padding:true,truncation:true});const{text_embeds}=await clipText(ti);const D=text_embeds.dims[1];
+  return texts.map((_,i)=>norm(text_embeds.data.slice(i*D,(i+1)*D)))}
+self.onmessage=async e=>{const{id,cmd,data}=e.data;try{let r;
+  if(cmd==="init")r=await init();else if(cmd==="cut")r=await cut(data);else if(cmd==="embedImage")r=await embedImage(data);else if(cmd==="embedText")r=await embedText(data);
+  self.postMessage({id,ok:true,r})}catch(err){self.postMessage({id,ok:false,err:String(err&&err.message||err)})}};
+</script>
+<script>
+/* ================= Référentiel ================= */
+const SECTIONS={
+  vetements:{label:"Vêtements",types:["Haut","T-shirt","Chemise","Pull","Brassière de sport","Jupe","Pantalon","Jean","Short","Legging","Jogging","Robe","Combinaison","Veste","Manteau"]},
+  chaussures:{label:"Chaussures",types:["Baskets","Chaussures de sport","Escarpins","Bottines","Bottes","Ballerines","Mocassins","Sandales"]},
+  sacs:{label:"Sacs",types:["Sac à main","Sac à dos","Tote bag","Pochette","Sac bandoulière","Sac de sport"]},
+  bijoux:{label:"Bijoux",types:["Boucles d'oreilles","Collier","Bracelet","Bague","Montre","Piercing","Bijou de cheveux","Broche"]},
+  maquillage:{label:"Maquillage",types:["Fond de teint","Anti-cernes","Poudre","Blush","Bronzer","Highlighter","Fard à paupières","Eyeliner","Mascara","Sourcils","Rouge à lèvres","Gloss","Baume à lèvres","Crayon à lèvres"]},
+  ongles:{label:"Ongles",types:["Vernis","Faux ongles","Top coat"]},
+  accessoires:{label:"Accessoires",types:["Lunettes","Ceinture","Foulard","Chouchou / bandeau","Casquette","Chapeau"]}
+};
+const SECTION_OF={};Object.entries(SECTIONS).forEach(([k,s])=>s.types.forEach(t=>SECTION_OF[t]=k));
+/* Descriptions anglaises données au modèle de vision (il ne comprend que l'anglais) */
+const TYPE_EN={"Haut":"a women's blouse top","T-shirt":"a t-shirt","Chemise":"a button-up shirt","Pull":"a knit sweater","Brassière de sport":"a sports bra","Jupe":"a skirt","Pantalon":"trousers","Jean":"blue jeans","Short":"shorts","Legging":"leggings","Jogging":"sweatpants joggers","Robe":"a dress","Combinaison":"a jumpsuit","Veste":"a jacket","Manteau":"a long coat",
+ "Baskets":"sneakers","Chaussures de sport":"running shoes","Escarpins":"high heel pumps","Bottines":"ankle boots","Bottes":"knee high boots","Ballerines":"ballet flats","Mocassins":"loafers","Sandales":"sandals",
+ "Sac à main":"a handbag","Sac à dos":"a backpack","Tote bag":"a canvas tote bag","Pochette":"a small clutch bag","Sac bandoulière":"a crossbody bag","Sac de sport":"a gym duffel bag",
+ "Boucles d'oreilles":"earrings","Collier":"a necklace","Bracelet":"a bracelet","Bague":"a ring jewelry","Montre":"a wristwatch","Piercing":"piercing jewelry","Bijou de cheveux":"a hair clip barrette","Broche":"a brooch",
+ "Fond de teint":"a liquid foundation bottle","Anti-cernes":"a concealer tube","Poudre":"a face powder compact","Blush":"a blush compact","Bronzer":"a bronzer compact","Highlighter":"a highlighter makeup compact","Fard à paupières":"an eyeshadow palette","Eyeliner":"an eyeliner pen","Mascara":"a mascara tube","Sourcils":"an eyebrow pencil","Rouge à lèvres":"a lipstick","Gloss":"a lip gloss tube","Baume à lèvres":"a lip balm","Crayon à lèvres":"a lip liner pencil",
+ "Vernis":"a nail polish bottle","Faux ongles":"press-on false nails","Top coat":"a clear nail polish top coat",
+ "Lunettes":"sunglasses","Ceinture":"a belt","Foulard":"a silk scarf","Chouchou / bandeau":"a hair scrunchie or headband","Casquette":"a baseball cap","Chapeau":"a hat"};
+const MOOD_EN={sport:"sportswear for the gym",ecole:"a casual outfit for school or university",casual:"relaxed weekend casual clothing",soiree:"elegant evening party wear",rdv:"a cute romantic date outfit",travail:"smart office work attire"};
+const FR_EN={"noir":"black","noire":"black","blanc":"white","blanche":"white","rouge":"red","rose":"pink","bleu":"blue","bleue":"blue","vert":"green","verte":"green","jaune":"yellow","beige":"beige","marron":"brown","gris":"grey","grise":"grey","violet":"purple","orange":"orange","doré":"gold","dorée":"gold","argenté":"silver","argentée":"silver","bordeaux":"burgundy","crème":"cream","kaki":"khaki","camel":"camel","marine":"navy","nude":"nude",
+ "cuir":"leather","jean":"denim","laine":"wool","soie":"silk","satin":"satin","lin":"linen","velours":"velvet","dentelle":"lace","coton":"cotton","maille":"knit","tweed":"tweed","perles":"pearls","perle":"pearl",
+ "fleuri":"floral","fleurie":"floral","fleurs":"floral","rayé":"striped","rayée":"striped","carreaux":"plaid","pois":"polka dot","imprimé":"printed","uni":"plain","léopard":"leopard print",
+ "long":"long","longue":"long","court":"short","courte":"short","moulant":"tight","moulante":"tight","ample":"oversized","plissé":"pleated","plissée":"pleated","chic":"elegant","soirée":"evening","sport":"sport","été":"summer","hiver":"winter","mini":"mini","midi":"midi","maxi":"maxi",
+ "pull":"sweater","jupe":"skirt","robe":"dress","pantalon":"trousers","veste":"jacket","manteau":"coat","chemise":"shirt","haut":"top","short":"shorts","baskets":"sneakers","bottes":"boots","bottines":"ankle boots","escarpins":"heels","sandales":"sandals","sac":"bag","collier":"necklace","bague":"ring","bracelet":"bracelet","montre":"watch","lunettes":"sunglasses","foulard":"scarf","ceinture":"belt","chapeau":"hat","casquette":"cap","gilet":"cardigan","blazer":"blazer","débardeur":"tank top","top":"crop top","legging":"leggings","jogging":"sweatpants"};
+const FR_PHRASES=[["col roulé","turtleneck"],["à talons","high heels"],["sac à main","handbag"],["sac à dos","backpack"],["boucles d'oreilles","earrings"],["créoles","hoop earrings"],["rouge à lèvres","lipstick"],["vernis","nail polish"]];
+function toEnglish(q){let s=" "+q.toLowerCase()+" ";FR_PHRASES.forEach(([a,b])=>s=s.split(a).join(b));return"a photo of "+s.trim().split(/\s+/).map(w=>FR_EN[w]||w).filter(w=>!["de","du","des","le","la","les","un","une","en","avec","pour","à"].includes(w)).join(" ")}
+
+const WEARABLE=["vetements","chaussures","sacs","bijoux","accessoires"];
+const ROLE_OF={"Haut":"top","T-shirt":"top","Chemise":"top","Pull":"top","Brassière de sport":"top","Jupe":"bottom","Pantalon":"bottom","Jean":"bottom","Short":"bottom","Legging":"bottom","Jogging":"bottom","Robe":"dress","Combinaison":"dress","Veste":"outer","Manteau":"outer"};
+const ROLE_LABEL={top:"Haut",bottom:"Bas",dress:"Robe",outer:"Veste",shoes:"Chaussures",bag:"Sac",acc:"Accessoire",bijou:"Bijou"};
+const Z={bottom:1,shoes:2,dress:3,top:4,outer:5,acc:7,bag:6,bijou:8};
+function roleOf(it){if(it.section==="vetements")return ROLE_OF[it.type]||"top";return{chaussures:"shoes",sacs:"bag",bijoux:"bijou",accessoires:"acc"}[it.section]||null}
+
+const MOODS={
+  sport:{label:"Sport",top:["Brassière de sport","T-shirt","Haut"],bottom:["Legging","Jogging","Short"],dress:[],dressP:0,outer:["Veste"],outerP:.3,
+    shoes:["Chaussures de sport","Baskets"],bag:["Sac de sport","Sac à dos","Tote bag"],acc:["Chouchou / bandeau","Casquette"],jw:["Boucles d'oreilles","Montre"],jwN:1,
+    makeup:[[["Baume à lèvres","Gloss"],"Baume hydratant"],[["Sourcils"],"Gel sourcils transparent"],[["Mascara"],"Mascara waterproof, facultatif"]],
+    nails:"Courts, nude ou transparent",
+    hair:[["Ananas haut","Rassemble les boucles sur le sommet du crâne avec un chouchou en satin, sans serrer. Elles gardent leur forme pendant la séance."],
+          ["Puff + bandeau éponge","Un puff haut et un bandeau large pour absorber la transpiration et dégager le visage."],
+          ["Deux tresses collées","Elles tiennent toute la séance. Le soir, défais-les : tu obtiens de jolies ondulations."]]},
+  ecole:{label:"École",top:["Pull","T-shirt","Chemise","Haut"],bottom:["Jean","Pantalon","Jupe"],dress:["Robe"],dressP:.15,outer:["Veste","Manteau"],outerP:.6,
+    shoes:["Baskets","Bottines","Ballerines","Mocassins"],bag:["Sac à dos","Tote bag","Sac bandoulière"],acc:["Chouchou / bandeau","Lunettes"],jw:["Boucles d'oreilles","Collier","Montre","Bague"],jwN:2,
+    makeup:[[["Anti-cernes"],"Anti-cernes léger"],[["Sourcils"],"Sourcils brossés"],[["Mascara"],"Une couche de mascara"],[["Blush"],"Touche de blush"],[["Baume à lèvres","Gloss"],"Baume teinté"]],
+    nails:"Nude, rose pâle ou une couleur douce",
+    hair:[["Wash & go défini","Vaporise de l'eau, applique ton leave-in puis un peu de gel en froissant. Laisse sécher sans toucher, puis casse le gel avec les mains."],
+          ["Demi-queue haute","Attache la moitié du dessus avec une pince ou un chouchou en satin, laisse le reste libre."],
+          ["Bandeau large","Dégage le visage et garde tout le volume derrière. Idéal quand les boucles sont moins définies."]]},
+  casual:{label:"Casual",top:["T-shirt","Pull","Haut","Chemise"],bottom:["Jean","Short","Jupe","Pantalon"],dress:["Robe","Combinaison"],dressP:.25,outer:["Veste"],outerP:.45,
+    shoes:["Baskets","Sandales","Ballerines","Bottines"],bag:["Tote bag","Sac bandoulière","Sac à dos"],acc:["Lunettes","Casquette","Foulard"],jw:["Boucles d'oreilles","Bracelet","Bague","Bijou de cheveux"],jwN:2,
+    makeup:[[["Fond de teint","Anti-cernes"],"Teint unifié léger"],[["Mascara"],"Mascara"],[["Gloss","Baume à lèvres"],"Gloss"]],
+    nails:"La couleur que tu aimes",
+    hair:[["Ananas lâche + mèches devant","Ananas bas et souple, laisse deux boucles tomber devant le visage."],
+          ["Bandana noué","Un foulard plié en bandeau, noué sur la nuque ou sur le dessus."],
+          ["Deux puffs","Sépare en deux au milieu et fais deux puffs hauts avec des chouchous en satin."]]},
+  soiree:{label:"Soirée",top:["Haut","Chemise"],bottom:["Jupe","Pantalon"],dress:["Robe","Combinaison"],dressP:.7,outer:["Veste","Manteau"],outerP:.4,
+    shoes:["Escarpins","Bottes","Sandales","Bottines"],bag:["Pochette","Sac à main"],acc:[],jw:["Boucles d'oreilles","Collier","Bracelet","Bague","Bijou de cheveux"],jwN:3,
+    makeup:[[["Fond de teint"],"Teint lumineux"],[["Highlighter"],"Highlighter en haut des pommettes"],[["Fard à paupières"],"Fard bronze ou smoky"],[["Eyeliner"],"Trait d'eyeliner"],[["Mascara"],"Mascara volume"],[["Rouge à lèvres"],"Lèvres intenses"]],
+    nails:"Rouge, bordeaux ou noir laqué",
+    hair:[["Boucles volumineuses sur le côté","Diffuse tête en bas pour le volume, puis rabats tout d'un côté avec deux épingles cachées."],
+          ["Chignon bas bouclé","Un chignon souple sur la nuque, laisse deux ou trois boucles autour du visage."],
+          ["Boucles libres + bijou de cheveux","Boucles bien définies, raie de côté marquée, une barrette bijou."]]},
+  rdv:{label:"Rendez-vous",top:["Haut","Chemise","Pull"],bottom:["Jupe","Jean","Pantalon"],dress:["Robe"],dressP:.5,outer:["Veste"],outerP:.4,
+    shoes:["Ballerines","Bottines","Escarpins","Sandales"],bag:["Sac bandoulière","Sac à main","Pochette"],acc:["Foulard"],jw:["Collier","Boucles d'oreilles","Bague","Bijou de cheveux"],jwN:2,
+    makeup:[[["Anti-cernes","Fond de teint"],"Teint frais"],[["Blush"],"Blush sur les pommettes"],[["Mascara"],"Mascara"],[["Gloss","Rouge à lèvres"],"Lèvres rosées"]],
+    nails:"Rose, nude rosé ou rouge doux",
+    hair:[["Twist-out","La veille, fais des vanilles sur cheveux humides avec de la crème. Le matin, défais-les doucement et sépare avec les doigts."],
+          ["Demi-chignon bouclé + barrette","Le dessus en petit chignon, le reste libre, une jolie barrette."],
+          ["Raie de côté + boucles libres","Une raie profonde sur le côté donne tout de suite un effet habillé."]]},
+  travail:{label:"Travail",top:["Chemise","Pull","Haut"],bottom:["Pantalon","Jupe","Jean"],dress:["Robe"],dressP:.2,outer:["Veste","Manteau"],outerP:.7,
+    shoes:["Mocassins","Escarpins","Bottines","Ballerines"],bag:["Sac à main","Tote bag"],acc:["Ceinture","Lunettes"],jw:["Montre","Boucles d'oreilles","Collier"],jwN:2,
+    makeup:[[["Fond de teint","Anti-cernes"],"Teint unifié"],[["Sourcils"],"Sourcils dessinés"],[["Mascara"],"Mascara"],[["Rouge à lèvres","Baume à lèvres"],"Rouge à lèvres nude"]],
+    nails:"Nude, beige ou rouge classique",
+    hair:[["Chignon bas soigné","Lisse les tempes avec un peu de gel et une brosse douce, chignon bas sur la nuque."],
+          ["Queue basse + foulard","Queue basse bouclée, un foulard en soie noué autour de l'élastique."],
+          ["Demi-queue avec pince","Le dessus retenu par une grande pince, les boucles libres derrière."]]}
+};
+const CURL_CARE={"2C":"Peu de produit : une mousse légère suffit, sinon les ondulations retombent.","3A":"Rafraîchis avec un spray d'eau + leave-in, puis froisse les boucles.",
+ "3B":"Le matin : eau + leave-in en vaporisateur, puis un peu de gel sur les longueurs pour la définition.","3C":"Hydrate bien : crème coiffante sur cheveux humides, garde un spray d'eau dans ton sac.",
+ "4A":"Crème riche + huile légère pour sceller l'hydratation, bonnet en satin la nuit.","4B":"Méthode LOC (liquide, huile, crème) et coiffures protectrices les jours chargés.","4C":"Hydratation profonde et coiffures protectrices ; le satin la nuit est indispensable."};
+const MORPHO={"X":"Marque la taille : haut rentré ou ceinture.","A":"Attire l'œil en haut (col travaillé, veste structurée), bas foncé et fluide.","V":"Équilibre avec du volume en bas : jupe évasée ou pantalon large.","H":"Crée une taille : ceinture, superpositions, jupe trapèze.","O":"Allonge la silhouette : col V, matières fluides, une seule couleur de haut en bas."};
+const FACE={"ovale":"Toutes les coiffures te vont : amuse-toi.","rond":"Du volume sur le dessus allonge le visage.","carré":"Laisse des boucles encadrer la mâchoire pour l'adoucir.","cœur":"Du volume au niveau du menton équilibre le front.","long":"Du volume sur les côtés, évite les coiffures très hautes."};
+const UNDERTONE={"froid":"Blush rose froid ou framboise, lèvres baies, bijoux argentés.","chaud":"Blush pêche ou terracotta, lèvres corail, bijoux dorés.","neutre":"Blush rose nude, lèvres vieux rose ; or et argent te vont."};
+const DEF_FIT={top:{x:50,y:31,w:54},outer:{x:50,y:33,w:60},dress:{x:50,y:46,w:56},bottom:{x:50,y:67,w:40},shoes:{x:50,y:95,w:36},bag:{x:80,y:52,w:26},acc:{x:50,y:5,w:26},
+ "bj:Boucles d'oreilles":{x:50,y:12,w:22},"bj:Collier":{x:50,y:21,w:22},"bj:Bracelet":{x:23,y:50,w:11},"bj:Montre":{x:23,y:49,w:11},"bj:Bague":{x:76,y:54,w:7},"bj:Bijou de cheveux":{x:60,y:3,w:12},bj:{x:50,y:22,w:12}};
+
+/* ================= Base de données locale (IndexedDB) =================
+   items : fiche de chaque pièce (type, couleur, moods, empreinte IA)
+   files : les images en fichiers binaires — photo, détourage, miniature
+   looks : favoris · kv : profil et réglages */
+const DB={db:null,
+  open(){return new Promise((res,rej)=>{let r;try{r=indexedDB.open("atelier-boucle",2)}catch(e){return rej(e)}
+    r.onupgradeneeded=()=>{const d=r.result;["items","looks"].forEach(n=>{if(!d.objectStoreNames.contains(n))d.createObjectStore(n,{keyPath:"id"})});
+      ["kv","files"].forEach(n=>{if(!d.objectStoreNames.contains(n))d.createObjectStore(n)})};
+    r.onsuccess=()=>{this.db=r.result;res()};r.onerror=()=>rej(r.error);r.onblocked=()=>rej(new Error("blocked"))})},
+  req(s,m,fn){return new Promise((res,rej)=>{const q=fn(this.db.transaction(s,m).objectStore(s));q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+};
+const MEM={items:new Map(),looks:new Map(),kv:{},files:new Map()};let useDB=true;
+const sAll=s=>useDB?DB.req(s,"readonly",o=>o.getAll()):Promise.resolve([...MEM[s].values()]);
+const sPut=(s,v)=>useDB?DB.req(s,"readwrite",o=>o.put(v)):Promise.resolve(MEM[s].set(v.id,v));
+const sDel=(s,k)=>useDB?DB.req(s,"readwrite",o=>o.delete(k)):Promise.resolve(MEM[s].delete(k));
+const kvGet=k=>useDB?DB.req("kv","readonly",o=>o.get(k)):Promise.resolve(MEM.kv[k]);
+const kvSet=(k,v)=>useDB?DB.req("kv","readwrite",o=>o.put(v,k)):Promise.resolve(MEM.kv[k]=v);
+const fGet=k=>useDB?DB.req("files","readonly",o=>o.get(k)):Promise.resolve(MEM.files.get(k));
+const fPut=(k,b)=>{dropURL(k);return useDB?DB.req("files","readwrite",o=>o.put(b,k)):Promise.resolve(MEM.files.set(k,b))};
+const fDel=k=>{dropURL(k);return useDB?DB.req("files","readwrite",o=>o.delete(k)):Promise.resolve(MEM.files.delete(k))};
+
+/* Cache d'adresses d'images en mémoire, chargées à la demande */
+const URLS=new Map(),LOADING=new Set();
+function dropURL(k){const u=URLS.get(k);if(u){URLS.delete(k);try{URL.revokeObjectURL(u)}catch(_){}}}
+async function loadURL(k){if(URLS.has(k))return URLS.get(k);const b=await fGet(k).catch(()=>null);if(!b)return null;const u=URL.createObjectURL(b);URLS.set(k,u);return u}
+let rT=null;const soon=()=>{clearTimeout(rT);rT=setTimeout(render,60)};
+function want(k){if(URLS.has(k)||LOADING.has(k))return;LOADING.add(k);loadURL(k).then(u=>{LOADING.delete(k);if(u)soon()})}
+const thumbURL=it=>URLS.get(it.id+":thumb")||(want(it.id+":thumb"),"");
+function wearSrc(it){if(it.nocut||!it.hasCut)return thumbURL(it);const k=it.id+":cut";if(URLS.has(k))return URLS.get(k);want(k);return thumbURL(it)}
+
+/* ================= État ================= */
+const S={page:"studio",items:[],looks:[],profile:{curl:"3B",fit:{}},mood:"ecole",look:null,dressTab:"vetements",tf:null,q:"",sel:null,board:false,mirror:false,recent:new Set(),limit:60,aiHits:null,job:null};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const itemById=id=>S.items.find(i=>i.id===id);
+function toast(t){document.querySelectorAll(".toast").forEach(x=>x.remove());const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2400)}
+const IN_CLAUDE=/claude|anthropic/.test(location.hostname);
+
+/* ================= Couleurs ================= */
+function hexToRgb(h){h=h.replace("#","");return[0,2,4].map(i=>parseInt(h.slice(i,i+2),16))}
+function rgbToHex(r,g,b){return"#"+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("")}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0,l=(mx+mn)/2;
+  if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60}return[h,s,l]}
+function colorInfo(hex){const[h,s,l]=rgbToHsl(...hexToRgb(hex));let name,neutral=true;
+  if(l<.14)name="noir";else if(l>.9&&s<.4)name="blanc";else if(s<.12)name=l>.68?"gris clair":l>.38?"gris":"anthracite";
+  else if(h>=15&&h<50&&s<.55)name=l>.74?"crème":l>.52?"beige":l>.3?"camel":"marron";
+  else if(h>=190&&h<240&&s<.45&&l<.62)name="denim";
+  else{neutral=false;
+    if(h<12||h>=345)name=l>.7?"rose poudré":l<.3?"bordeaux":"rouge";else if(h<40)name=l>.7?"pêche":"orange";else if(h<65)name="jaune";
+    else if(h<165)name=l<.3?"vert sapin":"vert";else if(h<250)name=l<.3?"bleu marine":"bleu";else if(h<290)name="violet";else name=l>.7?"rose pâle":"rose";
+    if(name==="bleu marine")neutral=true}
+  return{hex,h,s,l,name,neutral}}
+function metal(c){if(!c)return null;if(c.l>.86&&c.s<.35)return"perle";if(c.h>=28&&c.h<64&&c.s>.2&&c.l>.28&&c.l<.82)return"doré";if(c.s<.15&&c.l>.5)return"argenté";if((c.h<28||c.h>340)&&c.s>.2&&c.l>.5&&c.l<.8)return"or rose";return null}
+const colorName=it=>it.section==="bijoux"?(metal(it.color)||it.color?.name||""):(it.color?.name||"");
+/* Couleur dominante : sur les pixels du sujet si le fond est retiré, sinon au centre de la photo */
+async function dominantFrom(blob,alpha){const bm=await bitmap(blob);const sc=Math.min(1,160/Math.max(bm.width,bm.height));const w=Math.max(1,Math.round(bm.width*sc)),h=Math.max(1,Math.round(bm.height*sc));
+  const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.drawImage(bm,0,0,w,h);const d=x.getImageData(0,0,w,h).data;const B=new Map();
+  for(let y=0;y<h;y++)for(let X=0;X<w;X++){if(!alpha&&(X<w*.25||X>w*.75||y<h*.25||y>h*.75))continue;const k4=(y*w+X)*4;if(alpha&&d[k4+3]<200)continue;
+    const k=(d[k4]>>5)<<6|(d[k4+1]>>5)<<3|(d[k4+2]>>5);const e=B.get(k)||{n:0,r:0,g:0,b:0};e.n++;e.r+=d[k4];e.g+=d[k4+1];e.b+=d[k4+2];B.set(k,e)}
+  let best=null;for(const e of B.values())if(!best||e.n>best.n)best=e;return best?rgbToHex(best.r/best.n,best.g/best.n,best.b/best.n):"#cccccc"}
+const hueDist=(a,b)=>{const d=Math.abs(a-b)%360;return d>180?360-d:d};
+function loud(colors){const fams=[];colors.filter(c=>c&&!c.neutral).forEach(c=>{if(!fams.some(f=>hueDist(f.h,c.h)<28))fams.push(c)});return fams}
+function harmony(colors){const f=loud(colors);if(!f.length)return 1.2;if(f.length===1)return 2;
+  if(f.length===2){const d=hueDist(f[0].h,f[1].h);return d<55?1.4:d>150?.4:-1.5}return-4}
+
+/* ================= Images ================= */
+async function bitmap(src){try{return await createImageBitmap(src,{imageOrientation:"from-image"})}catch(_){
+  const u=typeof src==="string"?src:URL.createObjectURL(src);const im=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error("img"));i.src=u});return im}}
+const toBlob=(c,type="image/jpeg",q=.82)=>new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error("blob")),type,q));
+async function shrink(src,max,type="image/jpeg",bg=null,q=.82){const bm=await bitmap(src);const sc=Math.min(1,max/Math.max(bm.width,bm.height));
+  const c=document.createElement("canvas");c.width=Math.max(1,Math.round(bm.width*sc));c.height=Math.max(1,Math.round(bm.height*sc));const x=c.getContext("2d");
+  if(bg){x.fillStyle=bg;x.fillRect(0,0,c.width,c.height)}x.drawImage(bm,0,0,c.width,c.height);return toBlob(c,type,q)}
+const blobToDataURL=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(b)});
+function dataURLToBlob(u){const[h,d]=u.split(",");const mime=(h.match(/:(.*?);/)||[])[1]||"image/jpeg";const bin=atob(d);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime})}
+function cropAlphaCanvas(c){const x=c.getContext("2d"),w=c.width,h=c.height,d=x.getImageData(0,0,w,h).data;let x0=w,y0=h,x1=-1,y1=-1;
+  for(let y=0;y<h;y++)for(let i=0;i<w;i++)if(d[(y*w+i)*4+3]>24){if(i<x0)x0=i;if(i>x1)x1=i;if(y<y0)y0=y;if(y>y1)y1=y}
+  if(x1<0)return c;const o=document.createElement("canvas");o.width=x1-x0+1;o.height=y1-y0+1;o.getContext("2d").drawImage(c,-x0,-y0);return o}
+/* Détourage de secours sans IA : retire un fond uni à partir des bords */
+async function floodCut(blob,max=520){const bm=await bitmap(blob);const sc=Math.min(1,max/Math.max(bm.width,bm.height));const w=Math.round(bm.width*sc),h=Math.round(bm.height*sc);
+  const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.drawImage(bm,0,0,w,h);const id=x.getImageData(0,0,w,h),d=id.data;
+  const R=[],G=[],Bb=[];const smp=k=>{R.push(d[k]);G.push(d[k+1]);Bb.push(d[k+2])};
+  for(let i=0;i<w;i+=2){smp(i*4);smp(((h-1)*w+i)*4)}for(let j=0;j<h;j+=2){smp(j*w*4);smp((j*w+w-1)*4)}
+  const med=a=>a.sort((p,q)=>p-q)[a.length>>1];const br=med(R),bg=med(G),bb=med(Bb);const tol=44;
+  const seen=new Uint8Array(w*h),st=[];const push=p=>{if(!seen[p]){seen[p]=1;st.push(p)}};
+  for(let i=0;i<w;i++){push(i);push((h-1)*w+i)}for(let j=0;j<h;j++){push(j*w);push(j*w+w-1)}
+  while(st.length){const p=st.pop(),k=p*4;const dd=Math.hypot(d[k]-br,d[k+1]-bg,d[k+2]-bb);if(dd>tol)continue;
+    d[k+3]=dd<tol*.55?0:Math.round(255*(dd-tol*.55)/(tol*.45));const px=p%w,py=(p/w)|0;
+    if(px>0)push(p-1);if(px<w-1)push(p+1);if(py>0)push(p-w);if(py<h-1)push(p+w)}
+  x.putImageData(id,0,0);return toBlob(cropAlphaCanvas(c),"image/png")}
+
+/* ================= IA locale (dans un Web Worker) ================= */
+const AI={w:null,state:"off",msg:"",pend:new Map(),seq:0,files:{},labels:null,initP:null,
+  get ready(){return this.state==="ready"},
+  start(){if(this.initP)return this.initP;
+    if(IN_CLAUDE){this.state="error";this.msg="L'IA locale fonctionne dans l'appli installée sur ton téléphone ou ton PC, pas dans cet aperçu.";render();return Promise.reject(new Error(this.msg))}
+    try{const src=$("#ai-src").textContent;this.w=new Worker(URL.createObjectURL(new Blob([src],{type:"text/javascript"})),{type:"module"})}
+    catch(e){this.state="error";this.msg="Ce navigateur ne peut pas lancer l'IA.";render();return Promise.reject(e)}
+    this.w.onmessage=e=>{const m=e.data;if(m.type==="progress"){if(m.file&&m.total){this.files[m.name+"/"+m.file]={l:m.loaded||0,t:m.total}}else if(m.status==="done"&&m.file&&this.files[m.name+"/"+m.file]){const f=this.files[m.name+"/"+m.file];f.l=f.t}aiProgress();return}
+      const p=this.pend.get(m.id);if(!p)return;this.pend.delete(m.id);m.ok?p.res(m.r):p.rej(new Error(m.err))};
+    this.w.onerror=e=>{this.state="error";this.msg="L'IA s'est arrêtée ("+(e.message||"erreur")+").";this.pend.forEach(p=>p.rej(new Error(this.msg)));this.pend.clear();render()};
+    this.state="loading";render();
+    this.initP=this.call("init").then(async()=>{await this.prepLabels();this.state="ready";kvSet("aiEnabled",true);render();toast("IA locale prête")})
+      .catch(err=>{this.state="error";this.msg="Téléchargement impossible : vérifie ta connexion, puis réessaie. ("+String(err.message||err).slice(0,120)+")";this.initP=null;try{this.w.terminate()}catch(_){}this.w=null;render();throw err});
+    return this.initP},
+  call(cmd,data){return new Promise((res,rej)=>{const id=++this.seq;this.pend.set(id,{res,rej});this.w.postMessage({id,cmd,data})})},
+  async prepLabels(){const saved=await kvGet("labels:v1");if(saved&&saved.types&&saved.types.length===Object.keys(TYPE_EN).length){this.labels=saved;return}
+    const types=Object.keys(TYPE_EN),moods=Object.keys(MOOD_EN);
+    const embs=await this.call("embedText",[...types.map(t=>"a product photo of "+TYPE_EN[t]),...moods.map(m=>"a photo of "+MOOD_EN[m])]);
+    this.labels={types:types.map((t,i)=>({type:t,emb:embs[i]})),moods:Object.fromEntries(moods.map((m,i)=>[m,embs[types.length+i]]))};await kvSet("labels:v1",this.labels)},
+  classify(emb){const sims=this.labels.types.map(l=>({type:l.type,s:dot(emb,l.emb)*100}));const mx=Math.max(...sims.map(x=>x.s));const ex=sims.map(x=>({...x,e:Math.exp(x.s-mx)}));const Z=ex.reduce((a,x)=>a+x.e,0);
+    const top=ex.map(x=>({type:x.type,p:x.e/Z})).sort((a,b)=>b.p-a.p).slice(0,3);
+    const ms=Object.entries(this.labels.moods).map(([k,e])=>[k,dot(emb,e)*100]);const mm=Math.max(...ms.map(x=>x[1]));const me=ms.map(([k,s])=>[k,Math.exp(s-mm)]);const MZ=me.reduce((a,x)=>a+x[1],0);
+    const moods=me.map(([k,e])=>[k,e/MZ]).sort((a,b)=>b[1]-a[1]).filter(x=>x[1]>.24).slice(0,2).map(x=>x[0]);return{top,moods}}
+};
+function dot(a,b){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*b[i];return s}
+function aiProgress(){const fs=Object.values(AI.files);const t=fs.reduce((a,f)=>a+f.t,0),l=fs.reduce((a,f)=>a+f.l,0);const el=$("#ai-bar");
+  if(el){el.style.setProperty("--v",(t?l/t*100:3)+"%");const tx=$("#ai-mb");if(tx)tx.textContent=`${Math.round(l/1048576)} / ${Math.round(t/1048576)} Mo`}}
+/* Affinité d'une pièce avec un mood selon l'IA (écart à sa moyenne sur tous les moods) */
+function moodAffinity(it,mood){if(!AI.labels||!it.emb)return 0;if(!it._ms){it._ms={};const v=Object.entries(AI.labels.moods).map(([k,e])=>[k,dot(it.emb,e)]);const m=v.reduce((a,x)=>a+x[1],0)/v.length;
+  const sd=Math.sqrt(v.reduce((a,x)=>a+(x[1]-m)**2,0)/v.length)||1;v.forEach(([k,s])=>it._ms[k]=(s-m)/sd)}return Math.max(-1.6,Math.min(1.6,it._ms[mood]||0))}
+
+/* Analyse complète d'une photo : compression, détourage, miniature, couleur, empreinte IA */
+async function analyzePhoto(file,{ai=AI.ready}={}){
+  const img=await shrink(file,1200,"image/jpeg",null,.84);let cut=null;
+  if(ai){try{const r=await AI.call("cut",img);cut=r.cut}catch(_){}}
+  if(!cut){try{cut=await floodCut(img)}catch(_){}}
+  const thumb=await shrink(cut||img,420,"image/jpeg","#ffffff",.8);
+  const color=colorInfo(await dominantFrom(cut||img,!!cut));
+  let emb=null,guess=null;if(ai){try{emb=await AI.call("embedImage",thumb);guess=AI.classify(emb)}catch(_){}}
+  return{img,cut,thumb,color,emb,guess}}
+async function storeFiles(id,a){await fPut(id+":img",a.img);if(a.cut)await fPut(id+":cut",a.cut);else await fDel(id+":cut");await fPut(id+":thumb",a.thumb);await loadURL(id+":thumb")}
+async function deleteItemFiles(id){for(const k of["img","cut","thumb"])await fDel(id+":"+k)}
+
+/* ================= Exemples (dessinés, déjà détourés) ================= */
+function drawDemo(type,hex){const c=document.createElement("canvas");c.width=480;c.height=600;const x=c.getContext("2d");const cx=240,cy=300;
+  x.fillStyle=hex;x.strokeStyle="rgba(21,18,21,.35)";x.lineWidth=3;x.lineJoin="round";x.lineCap="round";
+  const P=pts=>{x.beginPath();pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fill();x.stroke()};const r=ROLE_OF[type];
+  if(r==="top"||r==="outer"){P([[cx-70,cy-130],[cx-28,cy-145],[cx,cy-122],[cx+28,cy-145],[cx+70,cy-130],[cx+160,cy+40],[cx+122,cy+60],[cx+80,cy-30],[cx+82,cy+130],[cx-82,cy+130],[cx-80,cy-30],[cx-122,cy+60],[cx-160,cy+40]]);
+    if(r==="outer"){x.beginPath();x.moveTo(cx,cy-122);x.lineTo(cx,cy+130);x.stroke()}}
+  else if(type==="Jupe"){P([[cx-80,cy-120],[cx+80,cy-120],[cx+150,cy+120],[cx-150,cy+120]]);for(let i=-3;i<=3;i++){x.beginPath();x.moveTo(cx+i*20,cy-115);x.lineTo(cx+i*40,cy+118);x.stroke()}}
+  else if(r==="bottom"){const L=type==="Short"?20:270;P([[cx-80,cy-130],[cx+80,cy-130],[cx+92,cy-130+L],[cx+14,cy-130+L],[cx,cy-60],[cx-14,cy-130+L],[cx-92,cy-130+L]])}
+  else if(r==="dress"){P([[cx-55,cy-250],[cx+55,cy-250],[cx+66,cy-90],[cx+170,cy+250],[cx-170,cy+250],[cx-66,cy-90]])}
+  else if(SECTIONS.chaussures.types.includes(type)){[-95,95].forEach(dx=>{x.beginPath();x.ellipse(cx+dx,cy,70,34,0,0,Math.PI*2);x.fill();x.stroke()});
+    if(type==="Escarpins"){x.fillRect(cx-160,cy,12,60);x.fillRect(cx+148,cy,12,60)}}
+  else if(SECTIONS.sacs.types.includes(type)){x.beginPath();x.roundRect(cx-120,cy-40,240,180,24);x.fill();x.stroke();
+    x.beginPath();x.lineWidth=12;x.strokeStyle=type==="Sac à main"?"#B39463":hex;x.arc(cx,cy-40,80,Math.PI,0);x.stroke()}
+  else if(type==="Boucles d'oreilles"){x.lineWidth=16;x.strokeStyle=hex;[-110,110].forEach(dx=>{x.beginPath();x.arc(cx+dx,cy,58,0,Math.PI*2);x.stroke()})}
+  else if(type==="Collier"){for(let a=.08;a<=.92;a+=.042){const t=a*Math.PI;x.beginPath();x.arc(cx+175*Math.cos(t),cy-70+150*Math.sin(t),13,0,Math.PI*2);x.fillStyle=hex;x.fill();x.strokeStyle="rgba(21,18,21,.25)";x.lineWidth=1.5;x.stroke()}}
+  else if(type==="Bracelet"){x.lineWidth=22;x.strokeStyle=hex;x.beginPath();x.ellipse(cx,cy,110,70,0,0,Math.PI*2);x.stroke()}
+  else if(type==="Montre"){x.fillStyle="#1A1718";x.fillRect(cx-34,cy-170,68,340);x.fillStyle=hex;x.beginPath();x.arc(cx,cy,72,0,Math.PI*2);x.fill();x.fillStyle="#FFFAF3";x.beginPath();x.arc(cx,cy,56,0,Math.PI*2);x.fill()}
+  else if(type==="Vernis"){x.beginPath();x.roundRect(cx-70,cy-20,140,160,30);x.fill();x.stroke();x.fillStyle="#151215";x.fillRect(cx-30,cy-140,60,120)}
+  else{x.fillStyle="#151215";x.beginPath();x.roundRect(cx-40,cy-30,80,180,10);x.fill();x.fillStyle=hex;x.beginPath();x.roundRect(cx-30,cy-130,60,110,[30,30,4,4]);x.fill()}
+  return cropAlphaCanvas(c)}
+const DEMO=[["vetements","Pull","#EDE3D1",["ecole","casual"]],["vetements","T-shirt","#1A1718",[]],["vetements","Chemise","#FFFFFF",["travail","ecole"]],
+ ["vetements","Brassière de sport","#E8A3B5",["sport"]],["vetements","Jean","#4E6788",["ecole","casual"]],["vetements","Jupe","#1A1718",["rdv","soiree","ecole"]],
+ ["vetements","Legging","#1A1718",["sport"]],["vetements","Pantalon","#C9B79F",["travail"]],["vetements","Robe","#9E2235",["soiree","rdv"]],
+ ["vetements","Veste","#D8C8B8",["ecole","travail","rdv"]],["chaussures","Baskets","#F7F4F0",["ecole","casual","sport"]],["chaussures","Escarpins","#1A1718",["soiree","travail"]],
+ ["chaussures","Ballerines","#E9CDBF",["rdv","ecole"]],["sacs","Sac à main","#1A1718",["travail","soiree","rdv"]],["sacs","Sac à dos","#CDB9A0",["ecole"]],["sacs","Sac de sport","#E8A3B5",["sport"]],
+ ["bijoux","Boucles d'oreilles","#C9A45C",[]],["bijoux","Collier","#F5F0E8",["soiree","rdv","travail"]],["bijoux","Bracelet","#C9A45C",[]],["bijoux","Montre","#C9A45C",["travail","ecole"]],["bijoux","Boucles d'oreilles","#C3C4C9",[]],
+ ["maquillage","Rouge à lèvres","#9E2235",[]],["maquillage","Gloss","#E7A7B4",[]],["maquillage","Mascara","#151113",[]],["ongles","Vernis","#9E2235",["soiree"]],["ongles","Vernis","#E9CDBF",["ecole","travail","rdv"]]];
+async function seedDemo(){let n=0;for(const[section,type,hex,moods]of DEMO){const cc=drawDemo(type,hex);const cut=await toBlob(cc,"image/png");
+  const t=document.createElement("canvas");t.width=cc.width+60;t.height=cc.height+60;const tx=t.getContext("2d");tx.fillStyle="#ffffff";tx.fillRect(0,0,t.width,t.height);tx.drawImage(cc,30,30);
+  const thumb=await shrink(await toBlob(t,"image/jpeg",.85),420,"image/jpeg","#ffffff");const id=uid()+(n++);
+  await storeFiles(id,{img:thumb,cut,thumb});await sPut("items",{id,section,type,color:colorInfo(hex),moods,hasCut:true,note:"",demo:true,created:Date.now()-n})}}
+
+/* ================= Générateur de look ================= */
+function scoreItem(it,mood,prefs){let s=Math.random()*1.6;if(it.moods&&it.moods.length)s+=it.moods.includes(mood)?4:-3;else s+=moodAffinity(it,mood)*1.3;
+  const i=(prefs||[]).indexOf(it.type);s+=i>=0?3-i*.4:-1;if(S.recent.has(it.id))s-=1.2;return s}
+function rank(list,mood,prefs,base){return list.map(it=>({it,s:scoreItem(it,mood,prefs)+(base?harmony([...base,it.color])*1.3:0)})).sort((a,b)=>b.s-a.s).map(x=>x.it)}
+const bySec=(sec,types)=>S.items.filter(i=>i.section===sec&&!i.review&&(!types||types.includes(i.type)));
+function pickJewels(mood,base){const M=MOODS[mood];const bj=bySec("bijoux");if(!bj.length||!M.jwN||(mood==="sport"&&Math.random()<.5))return{pool:bj,chosen:[]};
+  const pref=S.profile.undertone==="chaud"?"doré":S.profile.undertone==="froid"?"argenté":null;
+  const pool=bj.map(it=>({it,s:scoreItem(it,mood,M.jw)+(pref&&metal(it.color)===pref?1.6:0)+harmony([...base,it.color])*.5})).sort((a,b)=>b.s-a.s).map(x=>x.it);
+  const chosen=[];let met=null;for(const it of pool){if(chosen.length>=M.jwN)break;if(chosen.some(c=>c.type===it.type))continue;
+    const m=metal(it.color);if(met&&m&&m!==met&&m!=="perle"&&met!=="perle")continue;chosen.push(it);if(m&&m!=="perle")met=met||m}
+  return{pool,chosen}}
+function generate(mood){const M=MOODS[mood];const C=bySec("vetements");const R=r=>C.filter(i=>ROLE_OF[i.type]===r);
+  const tops=R("top"),bottoms=R("bottom"),dresses=R("dress"),outers=R("outer");const ranked={},pieces=[];
+  const rd=rank(dresses,mood,M.dress.length?M.dress:["Robe"]);const tagged=rd[0]&&rd[0].moods&&rd[0].moods.includes(mood);
+  if(rd.length&&(!tops.length||!bottoms.length||Math.random()<(tagged?Math.max(M.dressP,.35):M.dressP))){ranked.dress=rd;pieces.push({role:"dress",id:rd[0].id})}
+  else if(tops.length||bottoms.length){const rt=rank(tops,mood,M.top).slice(0,5),rb=rank(bottoms,mood,M.bottom).slice(0,5);let best=null;
+    for(const t of rt.length?rt:[null])for(const b of rb.length?rb:[null]){const sc=(t?(rt.length-rt.indexOf(t))*.6:0)+(b?(rb.length-rb.indexOf(b))*.6:0)+harmony([t&&t.color,b&&b.color])*1.5+Math.random();if(!best||sc>best.sc)best={t,b,sc}}
+    if(best.t){ranked.top=[best.t,...rank(tops,mood,M.top).filter(x=>x!==best.t)];pieces.push({role:"top",id:best.t.id})}
+    if(best.b){ranked.bottom=[best.b,...rank(bottoms,mood,M.bottom).filter(x=>x!==best.b)];pieces.push({role:"bottom",id:best.b.id})}}
+  const base=()=>pieces.map(p=>itemById(p.id).color);
+  if(outers.length&&Math.random()<M.outerP){ranked.outer=rank(outers,mood,M.outer,base());pieces.push({role:"outer",id:ranked.outer[0].id})}
+  const sh=bySec("chaussures");if(sh.length){ranked.shoes=rank(sh,mood,M.shoes,base());pieces.push({role:"shoes",id:ranked.shoes[0].id})}
+  const bg=bySec("sacs");if(bg.length){ranked.bag=rank(bg,mood,M.bag,base());pieces.push({role:"bag",id:ranked.bag[0].id})}
+  const ac=bySec("accessoires");if(ac.length&&M.acc.length&&Math.random()<.5){ranked.acc=rank(ac,mood,M.acc,base());pieces.push({role:"acc",id:ranked.acc[0].id})}
+  const jw=pickJewels(mood,base());ranked.bijou=jw.pool;jw.chosen.forEach(j=>pieces.push({role:"bijou",id:j.id}));
+  pieces.forEach(p=>S.recent.add(p.id));if(S.recent.size>16)S.recent=new Set([...S.recent].slice(-16));
+  const L={id:uid(),mood,pieces,ranked,hair:M.hair[Math.floor(Math.random()*M.hair.length)],date:Date.now()};beauty(L);return L}
+function beauty(L){const M=MOODS[L.mood];const cols=L.pieces.map(p=>itemById(p.id)).filter(Boolean).map(i=>i.color);const lo=loud(cols);
+  L.makeup=M.makeup.map(([types,gen])=>{let cand=bySec("maquillage",types);let pick=null;
+    if(cand.length){if(types.some(t=>/lèvres|Gloss/.test(t))&&lo.length)cand.sort((a,b)=>hueDist(a.color.h,lo[0].h)-hueDist(b.color.h,lo[0].h));else cand=rank(cand,L.mood,types);pick=cand[0]}
+    return{gen,id:pick?pick.id:null}});
+  const nl=bySec("ongles");L.nails=nl.length?nl.map(n=>({n,s:scoreItem(n,L.mood,["Vernis"])+harmony([...cols,n.color])})).sort((a,b)=>b.s-a.s)[0].n.id:null}
+function swapPiece(pi){const L=S.look,p=L.pieces[pi];const list=(L.ranked[p.role]||[]).filter(i=>i.id===p.id||!L.pieces.some(q=>q.id===i.id));
+  const same=p.role==="bijou"?list.filter(i=>i.type===itemById(p.id).type):list;const use=same.length>1?same:list;
+  if(use.length<2){toast("Pas d'autre pièce de ce type");return}const idx=use.findIndex(i=>i.id===p.id);p.id=use[(idx+1)%use.length].id;beauty(L);render()}
+function tryItem(it){const role=roleOf(it);if(!role){itemSheet(it);return}
+  if(!S.look)S.look={id:uid(),mood:S.mood,pieces:[],ranked:{},hair:MOODS[S.mood].hair[0],date:Date.now()};const L=S.look;
+  if(role==="bijou"){const ex=L.pieces.findIndex(p=>p.role==="bijou"&&itemById(p.id)?.type===it.type);if(ex>=0)L.pieces[ex].id=it.id;else L.pieces.push({role,id:it.id})}
+  else{if(role==="dress")L.pieces=L.pieces.filter(p=>p.role!=="top"&&p.role!=="bottom");if(role==="top"||role==="bottom")L.pieces=L.pieces.filter(p=>p.role!=="dress");
+    const ex=L.pieces.find(p=>p.role===role);if(ex)ex.id=it.id;else L.pieces.push({role,id:it.id})}
+  L.ranked[role]=L.ranked[role]||[];if(!L.ranked[role].includes(it))L.ranked[role].unshift(it);
+  beauty(L);S.sel=L.pieces.findIndex(p=>p.id===it.id);if(S.page!=="studio")S.page="studio";closeSheet();render();toast(it.type+" essayé")}
+
+/* ================= Placement sur la photo ================= */
+function fitKey(p){return p.role==="bijou"?"bj:"+(itemById(p.id)?.type||""):p.role}
+function getFit(p){const k=fitKey(p);return S.profile.fit[k]||{...(DEF_FIT[k]||DEF_FIT.bj)}}
+function setFit(p,f){S.profile.fit[fitKey(p)]=f;kvSet("profile",S.profile)}
+
+/* ================= Rendu ================= */
+function render(){document.querySelectorAll("nav.bar [data-go]").forEach(b=>b.setAttribute("aria-current",b.dataset.go===S.page?"page":"false"));
+  const P={studio:pageStudio,dressing:pageDressing,favoris:pageFav,profil:pageProfil}[S.page]||pageStudio;
+  const ae=document.activeElement;const fid=ae&&ae.id&&ae.tagName==="INPUT"?ae.id:null;const pos=fid?ae.selectionStart:null;
+  $("#app").innerHTML=header()+jobBar()+P();
+  if(fid){const n=document.getElementById(fid);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}}}
+function header(){const p=S.profile;const d=new Date();
+  const ai=AI.ready?`<span class="ai-pill on">IA locale</span>`:AI.state==="loading"?`<span class="ai-pill">IA · téléchargement</span>`:"";
+  return`<header class="top"><div class="brand">Atelier<span class="mono">Studio · ${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}</span></div>
+  <div class="row" style="gap:10px">${ai}<button class="avatar" data-go="profil" aria-label="Mon profil" ${p.face?`style="background-image:url('${p.face}')"`:""}>${p.face?"":esc((p.name||"A")[0].toUpperCase())}</button></div></header>`}
+function jobBar(){const j=S.job;if(!j)return"";return`<div class="job panel"><span class="mono">${esc(j.label)} · ${j.done}/${j.total}</span><i class="bar" style="--v:${j.total?j.done/j.total*100:0}%"></i>${j.stop?`<span class="mono">arrêt…</span>`:`<button class="btn small ghost" data-act="stopjob">Arrêter</button>`}</div>`}
+function demoBanner(){return S.items.some(i=>i.demo)?`<div class="banner"><span>Les pièces <b>exemple</b> montrent le fonctionnement. Ajoute les tiennes, puis efface-les.</span><button class="btn small ghost" data-act="cleardemo">Effacer les exemples</button></div>`:""}
+function pinHTML(it,mode){const u=thumbURL(it);return`<button class="pin" ${mode==="try"?`data-try="${it.id}"`:`data-item="${it.id}"`}>${it.demo&&mode!=="try"?'<span class="demo-badge">exemple</span>':""}${it.review?'<span class="demo-badge rv">à vérifier</span>':""}${mode==="try"?'<span class="try-badge">essayer</span>':""}
+  ${u?`<img src="${u}" alt="${esc(it.type)} ${esc(colorName(it))}" loading="lazy" decoding="async">`:`<div class="ph-blank"></div>`}<span class="cap"><span class="tag">${esc(it.type)}</span><span class="dot" style="background:${it.color?.hex||"#ccc"}"></span></span></button>`}
+function filtered(){const q=S.q.trim().toLowerCase();
+  if(S.aiHits&&q)return S.aiHits.map(id=>itemById(id)).filter(Boolean);
+  if(S.dressTab==="review")return S.items.filter(i=>i.review).sort((a,b)=>b.created-a.created);
+  let L=S.items.filter(i=>i.section===S.dressTab);if(S.tf)L=L.filter(i=>i.type===S.tf);
+  if(q)L=S.items.filter(i=>(i.type+" "+colorName(i)+" "+(i.note||"")+" "+SECTIONS[i.section].label+" "+(i.moods||[]).map(m=>MOODS[m]?.label).join(" ")).toLowerCase().includes(q));
+  return L.sort((a,b)=>b.created-a.created)}
+function browser(mode){const rv=S.items.filter(i=>i.review).length;
+  const tabs=(rv?`<button class="chip warn" aria-pressed="${S.dressTab==="review"}" data-tab="review">À vérifier<span class="n">${rv}</span></button>`:"")+Object.entries(SECTIONS).map(([k,s])=>`<button class="chip" aria-pressed="${S.dressTab===k}" data-tab="${k}">${s.label}<span class="n">${S.items.filter(i=>i.section===k).length}</span></button>`).join("");
+  const types=S.dressTab==="review"?[]:[...new Set(S.items.filter(i=>i.section===S.dressTab).map(i=>i.type))];
+  return`<input class="search" type="search" id="q-${mode}" placeholder="${AI.ready?"Décris ce que tu cherches : robe rouge fleurie…":"Chercher : noir, jupe, soirée…"}" value="${esc(S.q)}" aria-label="Chercher dans le dressing" autocomplete="off">
+  <div class="chips scroll">${tabs}</div>
+  ${types.length>1&&!S.q?`<div class="chips scroll" style="margin-top:8px"><button class="chip" aria-pressed="${!S.tf}" data-tf="">Tout</button>${types.map(t=>`<button class="chip" aria-pressed="${S.tf===t}" data-tf="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
+  <div id="grid-${mode}">${gridHTML(mode)}</div>`}
+function gridHTML(mode){const L=filtered();const shown=L.slice(0,S.limit);const isTry=mode==="try";
+  const head=S.q?`<p class="mono" style="margin:10px 2px 0">${S.aiHits?"Recherche IA · ":""}${L.length} résultat${L.length>1?"s":""}</p>`:"";
+  return head+(L.length?`<div class="grid">${shown.map(i=>pinHTML(i,isTry&&WEARABLE.includes(i.section)?"try":"view")).join("")}</div>${L.length>shown.length?`<button class="btn ghost wide" data-act="more">Voir plus (${L.length-shown.length})</button>`:""}`
+    :`<div class="empty" style="margin-top:12px"><h3>Rien ici</h3><p>${S.q?"Essaie d'autres mots.":"Prends ta première pièce en photo."}</p>${S.q?"":`<button class="btn small" data-go="add" style="margin-top:10px">Ajouter</button>`}</div>`)}
+
+const SIL=`<svg class="ghost-fig" viewBox="0 0 300 500" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><circle cx="150" cy="44" r="27"/><path d="M137 70h26l2 16 38 10 14 120-14 70-8-64-6 62 8 196h-34l-12-160h-2l-12 160h-34l8-196-6-62-8 64-14-70 14-120 38-10z"/></svg>`;
+function pageStudio(){const L=S.look;const p=S.profile;const body=p.cutBody!==false&&p.bodyCut?p.bodyCut:p.body;
+  const items=L?L.pieces.map((x,i)=>({...x,i,it:itemById(x.id)})).filter(x=>x.it):[];
+  const h=harmony(items.map(x=>x.it.color));const pct=items.length?Math.max(30,Math.min(98,Math.round(70+h*12))):0;
+  const moods=Object.entries(MOODS).map(([k,m])=>`<button class="chip" aria-pressed="${S.mood===k}" data-mood="${k}">${m.label}</button>`).join("");
+  const wear=items.map(x=>{const f=getFit(x);const src=wearSrc(x.it);return src?`<img class="wear ${S.sel===x.i?"sel":""}" data-pi="${x.i}" src="${src}" alt="${esc(x.it.type)}" draggable="false" style="left:${f.x}%;top:${f.y}%;width:${f.w}%;z-index:${Z[x.role]||5}">`:""}).join("");
+  const thumbs=items.map(x=>`<button data-sel="${x.i}" aria-pressed="${S.sel===x.i}" style="background-image:url('${wearSrc(x.it)}')" aria-label="${esc(x.it.type)}"></button>`).join("");
+  const selItem=S.sel!=null&&items.find(x=>x.i===S.sel);
+  const stage=`<div class="stage ${S.board?"board":""}" id="stage">
+    <div class="ring"></div><div class="podium"></div>
+    <div class="figure ${S.mirror?"mirror":""}" id="fig">${body?`<img class="bodyimg" src="${body}" alt="Moi">`:SIL}${wear}</div>
+    <div class="hud tl mono"><span>Look · ${esc(MOODS[S.mood].label)}</span><b>${p.name?esc(p.name):"Toi"}</b></div>
+    ${items.length?`<div class="hud bl mono meter" style="--v:${pct}%"><span>Accord couleurs</span><i></i><span>${pct}%</span></div>`:""}
+    <div class="rail">
+      <button data-act="gen" aria-label="Nouveau look" title="Nouveau look"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg></button>
+      <button data-act="board" aria-pressed="${S.board}" aria-label="Pièces sur moi ou à côté" title="Pièces sur moi / à côté"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
+      <button data-act="mirror" aria-pressed="${S.mirror}" aria-label="Miroir" title="Miroir"><svg viewBox="0 0 24 24"><path d="M12 3v18M8 7l-4 5 4 5M16 7l4 5-4 5"/></svg></button>
+      <button data-go="profil" aria-label="Changer ma photo" title="Ma photo"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+    </div>
+    <div class="thumbs">${thumbs}</div>
+    ${!body?`<div class="stage-empty" style="top:auto;bottom:16%;transform:translateX(-50%)"><button class="btn small pink" data-go="profil">Ajoute ta photo en pied</button></div>`:""}
+    ${selItem&&!S.board?`<div class="ctl"><span class="mono">${esc(ROLE_LABEL[selItem.role])}</span><button data-size="-3" aria-label="Plus petit">−</button><button data-size="3" aria-label="Plus grand">+</button><button data-act="resetfit" aria-label="Remettre en place">↺</button><button data-act="desel" aria-label="Fermer">×</button></div>`:""}
+    ${!items.length?`<div class="stage-empty"><p class="mono">Aucune tenue</p><button class="btn small" data-act="gen">Composer mon look</button></div>`:""}
+  </div>`;
+  return`<div class="studio">
+  <aside class="left panel"><div class="ph-title"><h2>Mon dressing</h2><span class="mono">touche = essayer</span></div>${browser("try")}</aside>
+  <main style="min-width:0"><div class="moods" role="group" aria-label="Mood">${moods}</div>${stage}
+    <p class="mono" style="margin:8px 4px 0">Glisse une pièce pour l'ajuster sur toi · la position est retenue</p>${demoBanner()}</main>
+  <aside class="right panel">${lookPanel(L,items)}</aside></div>`}
+function lookPanel(L,items){if(!L||!items.length)return`<div class="ph-title"><h2>Ton look</h2></div><p style="color:var(--muted)">Choisis un mood au-dessus de la scène : la tenue apparaît ici.</p>`;
+  const p=S.profile;const rows=items.map(x=>`<div class="lrow"><span class="th" style="background-image:url('${wearSrc(x.it)}')"></span>
+    <span class="t"><b>${esc(x.it.type)}</b><small><span class="sw" style="background:${x.it.color?.hex}"></span>${esc(colorName(x.it))} · ${esc(ROLE_LABEL[x.role])}</small></span>
+    <span class="row" style="gap:4px"><button class="ibtn" data-swap="${x.i}" aria-label="Changer ${esc(x.it.type)}" title="Changer">↻</button><button class="ibtn" data-rm="${x.i}" aria-label="Retirer" title="Retirer">×</button></span></div>`).join("");
+  const lo=loud(items.map(x=>x.it.color));const verdict=!lo.length?"Palette neutre, très chic":lo.length===1?`Une couleur forte (${lo[0].name}) + des neutres : équilibré`:lo.length===2?(hueDist(lo[0].h,lo[1].h)<55?"Camaïeu harmonieux":hueDist(lo[0].h,lo[1].h)>150?"Contraste audacieux, assumé":"Deux couleurs qui se heurtent : change une pièce"):"Beaucoup de couleurs : garde-en une seule forte";
+  const tagged=items.filter(x=>x.it.moods?.length?x.it.moods.includes(L.mood):moodAffinity(x.it,L.mood)>-0.3).length;
+  const met=[...new Set(items.filter(x=>x.role==="bijou").map(x=>metal(x.it.color)).filter(Boolean))];
+  const checks=[verdict,`${tagged}/${items.length} pièces adaptées au mood ${MOODS[L.mood].label.toLowerCase()}${AI.ready?" (avis de l'IA inclus)":""}`,
+    met.length?`Bijoux : ${met.join(" + ")}${p.undertone==="chaud"&&met.includes("doré")||p.undertone==="froid"&&met.includes("argenté")?", parfait avec ton sous-ton":""}`:null,
+    p.morpho&&MORPHO[p.morpho],p.face_shape&&FACE[p.face_shape]].filter(Boolean);
+  const mk=(L.makeup||[]).map(m=>{const it=m.id&&itemById(m.id);return it?`<li><span class="th" style="background-image:url('${wearSrc(it)}')"></span><span>${esc(it.type)}<small>${esc(colorName(it))} · ${esc(m.gen)}</small></span></li>`:`<li><span class="th gen">+</span><span>${esc(m.gen)}<small>pas encore dans ta trousse</small></span></li>`}).join("");
+  const nail=L.nails&&itemById(L.nails);const curl=p.curl||"3B";const M=MOODS[L.mood];
+  const inLook=new Set(L.pieces.map(x=>x.id));
+  const reco=S.items.filter(i=>WEARABLE.includes(i.section)&&!inLook.has(i.id)&&!i.review).map(i=>({i,s:scoreItem(i,L.mood,[...M.top,...M.bottom,...M.dress,...M.shoes,...M.bag,...M.jw])})).sort((a,b)=>b.s-a.s).slice(0,8).map(x=>x.i);
+  return`<div class="ph-title"><h2>Ton look</h2><span class="mono">${items.length} pièces</span></div>${rows}
+  <div class="row" style="margin-top:12px"><button class="btn pink" data-act="savelook" style="flex:1">♡ J'adore</button><button class="btn" data-act="gen" style="flex:1">Un autre</button></div>
+  <div class="block"><span class="mono">Style & fit</span><ul class="checks">${checks.map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>
+  <div class="hair"><span class="mono" style="color:var(--ink)">Coiffure · boucles ${esc(curl)}</span><h3 style="font-size:20px;margin-top:4px">${esc(L.hair[0])}</h3><p style="margin:6px 0 0">${esc(L.hair[1])}</p><p style="margin:8px 0 0;font-size:13px;color:var(--muted)">${esc(CURL_CARE[curl]||"")}</p></div>
+  <div class="block"><span class="mono">Maquillage</span>${p.undertone?`<p style="font-size:13px;color:var(--muted);margin-top:4px">${esc(UNDERTONE[p.undertone])}</p>`:""}<ul class="mk">${mk}</ul></div>
+  <div class="block"><span class="mono">Ongles</span>${nail?`<ul class="mk"><li><span class="th" style="background-image:url('${wearSrc(nail)}')"></span><span>${esc(nail.type)} ${esc(colorName(nail))}<small>${esc(M.nails)}</small></span></li></ul>`:`<p>${esc(M.nails)}</p>`}</div>
+  ${reco.length?`<div class="block"><span class="mono">Recommandé pour toi</span><div class="reco">${reco.map(i=>`<button data-try="${i.id}"><div class="im" style="background-image:url('${wearSrc(i)}')"></div><span>${esc(i.type)}</span></button>`).join("")}</div></div>`:""}`}
+function pageDressing(){return`<div class="page-dress"><div class="ph-title"><h2 class="page-title">Mon dressing</h2><span class="mono">${S.items.length} pièces</span></div>${browser("view")}${demoBanner()}</div>`}
+function pageFav(){const L=[...S.looks].sort((a,b)=>b.date-a.date);
+  return`<div class="ph-title"><h2 class="page-title">Mes looks</h2><span class="mono">${L.length} favoris</span></div>
+  ${L.length?`<div class="favs">${L.map(l=>{const its=l.pieces.map(p=>itemById(p.id)).filter(Boolean);
+    return`<div class="panel fav"><div class="mini">${its.slice(0,6).map(i=>`<div style="background-image:url('${wearSrc(i)}')"></div>`).join("")}</div>
+    <h3>${esc(MOODS[l.mood]?.label||"")}</h3><p>${new Date(l.date).toLocaleDateString("fr-FR")} · ${esc(l.hair[0])}</p>
+    <div class="row"><button class="btn small" data-wear="${l.id}">Remettre</button><button class="btn small ghost" data-unfav="${l.id}">Retirer</button></div></div>`}).join("")}</div>`
+  :`<div class="empty"><h3>Aucun favori</h3><p>Dans le studio, touche « ♡ J'adore » pour garder un look.</p></div>`}`}
+function sel(id,label,opts,val){return`<div class="field"><label for="${id}">${label}</label><select id="${id}" data-prof="${id.slice(2)}"><option value="">—</option>${opts.map(([v,t])=>`<option value="${esc(v)}" ${val===v?"selected":""}>${esc(t)}</option>`).join("")}</select></div>`}
+function aiPanel(){const todo=S.items.filter(i=>!i.demo&&!i.emb).length;
+  let body;
+  if(AI.state==="ready")body=`<p class="ok">Prête · tout se calcule sur cet appareil, même hors ligne.</p>
+    <ul class="checks"><li>Retire le fond de chaque photo, même sur un fond chargé</li><li>Reconnaît le type de pièce et propose les moods</li><li>Recherche en décrivant : « jupe plissée noire », « bijoux dorés »</li></ul>
+    <div class="row" style="margin-top:12px">${todo?`<button class="btn small" data-act="reanalyze">Analyser mes ${todo} pièce${todo>1?"s":""} existante${todo>1?"s":""}</button>`:""}${S.profile.body?`<button class="btn small ghost" data-act="recutbody">Redétourer ma photo avec l'IA</button>`:""}</div>`;
+  else if(AI.state==="loading")body=`<p>Téléchargement des modèles… garde l'appli ouverte.</p><div class="meter big" id="ai-bar" style="--v:3%"><i></i></div><p class="mono" id="ai-mb" style="margin-top:6px">…</p>`;
+  else body=`<p>Deux modèles d'IA open source tournent directement sur ton appareil : un pour détourer les photos (RMBG), un pour reconnaître les pièces (CLIP). Tes photos ne partent sur aucun serveur.</p>
+    <p class="mono" style="margin-top:6px">≈ 130 Mo à télécharger une seule fois · en Wi-Fi de préférence</p>
+    ${AI.state==="error"?`<p class="err">${esc(AI.msg)}</p>`:""}
+    <button class="btn" data-act="aistart" style="margin-top:12px" ${IN_CLAUDE?"disabled":""}>${AI.state==="error"?"Réessayer":"Installer l'IA locale"}</button>`;
+  return`<div class="panel"><span class="mono">IA locale</span>${body}</div>`}
+function pageProfil(){const p=S.profile;const body=p.cutBody!==false&&p.bodyCut?p.bodyCut:p.body;
+  return`<div class="ph-title"><h2 class="page-title">Moi</h2></div><div class="prof">
+  <div class="panel"><span class="mono">Mes photos</span>
+   <div class="prof-photos" style="margin-top:10px">
+    <label class="ph ${p.face?"has":""}" style="${p.face?`background-image:url('${p.face}');background-size:cover`:""}">${p.face?"<span>Visage</span>":"Photo<br>du visage"}<input class="vh" type="file" accept="image/*" capture="user" data-pphoto="face"></label>
+    <label class="ph ${body?"has":""}" style="${body?`background-image:url('${body}')`:""}">${body?"<span>En pied</span>":"Photo<br>en pied"}<input class="vh" type="file" accept="image/*" capture="environment" data-pphoto="body"></label>
+   </div>
+   <p style="font-size:13px;color:var(--muted);margin:12px 0 0">Photo en pied : de face, bras un peu écartés, pieds visibles. ${AI.ready?"L'IA retire le fond, même chargé.":"Contre un mur uni et clair pour que le fond se retire bien."}</p>
+   ${p.body?`<label class="toggle" style="margin-top:10px"><input type="checkbox" id="cutbody" ${p.cutBody!==false?"checked":""}> Retirer le fond de ma photo</label>`:""}
+   ${Object.keys(p.fit||{}).length?`<button class="btn small ghost" data-act="resetall" style="margin-top:10px">Remettre toutes les pièces à leur place par défaut</button>`:""}
+  </div>
+  ${aiPanel()}
+  <div class="panel"><span class="mono">Mon profil</span>
+  <div class="field"><label for="p-name">Prénom</label><input type="text" id="p-name" data-prof="name" value="${esc(p.name||"")}" placeholder="Ton prénom"></div>
+  ${sel("p-curl","Type de boucles",["2C","3A","3B","3C","4A","4B","4C"].map(c=>[c,c+(c[0]==="2"?" · ondulé":c[0]==="3"?" · bouclé":" · frisé/crépu")]),p.curl)}
+  ${sel("p-morpho","Silhouette",[["X","Sablier (X)"],["A","Triangle (A)"],["V","Triangle inversé (V)"],["H","Rectangle (H)"],["O","Ronde (O)"]],p.morpho)}
+  ${sel("p-face_shape","Forme du visage",Object.keys(FACE).map(f=>[f,f[0].toUpperCase()+f.slice(1)]),p.face_shape)}
+  ${sel("p-undertone","Sous-ton de peau",[["froid","Froid (veines bleutées, l'argent te va)"],["chaud","Chaud (veines vertes, l'or te va)"],["neutre","Neutre"]],p.undertone)}
+  </div>
+  <div class="panel"><span class="mono">Stockage & sauvegarde</span><p style="margin:8px 0 0;font-size:14px" id="storage-line">${esc(S.storageLine||"Calcul de l'espace utilisé…")}</p>
+  <p style="margin:6px 0 12px;color:var(--muted);font-size:14px">Tout reste sur cet appareil. Exporte une copie pour passer du téléphone au PC, ou pour ne rien perdre si tu changes de téléphone.</p>
+  <div class="row"><button class="btn ghost small" data-act="export">Exporter</button><label class="btn ghost small">Importer<input class="vh" type="file" accept=".json,application/json" id="imp"></label></div></div></div>`}
+async function updateStorage(){try{if(!navigator.storage?.estimate)return;const e=await navigator.storage.estimate();const pers=navigator.storage.persisted?await navigator.storage.persisted():false;
+  S.storageLine=`${S.items.filter(i=>!i.demo).length} pièces · ${(e.usage/1048576).toFixed(0)} Mo utilisés sur ${(e.quota/1073741824).toFixed(1)} Go disponibles${pers?" · stockage protégé ✓":""}`;
+  const el=$("#storage-line");if(el)el.textContent=S.storageLine}catch(_){}}
+
+/* ================= Feuilles ================= */
+function openSheet(html){$("#layer").innerHTML=`<div class="sheet-bg" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`}
+function closeSheet(){$("#layer").innerHTML="";S.draft=null;S.open=null}
+const moodChips=(sel,attr)=>`<div class="chips">${Object.entries(MOODS).map(([k,m])=>`<button class="chip" aria-pressed="${sel.includes(k)}" ${attr}="${k}">${m.label}</button>`).join("")}</div>`;
+function addSheet(){const d=S.draft;
+  if(!d||!d.a){openSheet(`<h2>Ajouter</h2>${d&&d.busy?`<div class="busy"><span class="spin"></span><span>${AI.ready?"L'IA détoure et reconnaît la pièce…":"Préparation de la photo…"}</span></div>`:`
+    <p style="color:var(--muted);margin:6px 0 0">${AI.ready?"Prends la pièce en photo, même sur ton lit : l'IA retire le fond et reconnaît la pièce.":"Pose la pièce à plat ou sur un cintre, sur un fond uni et clair, à la lumière du jour."}</p>
+    <div class="cam"><label class="main"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="4"/></svg>Appareil photo<input class="vh" type="file" accept="image/*" capture="environment" id="cam-in"></label>
+    <label><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 16l5-5 4 4 3-3 4 4"/></svg>Galerie<input class="vh" type="file" accept="image/*" multiple id="gal-in"></label></div>
+    <p class="mono" style="margin-top:12px">${AI.ready?"Galerie : choisis jusqu'à 100 photos d'un coup, l'IA les range toute seule":"Astuce : installe l'IA locale (onglet Moi) pour importer des dizaines de photos d'un coup"}</p>`}`);return}
+  const sec=SECTIONS[d.section];const g=d.a.guess;
+  openSheet(`<div class="preview checker"><img id="dprev" src="${d.prev}" alt="Aperçu"></div>
+   ${d.queue&&d.queue.length?`<p class="mono" style="margin:8px 0 0">Encore ${d.queue.length} photo(s) après celle-ci</p>`:""}
+   ${g?`<p class="ai-guess"><span class="mono">IA</span> ${esc(g.top[0].type)} · ${Math.round(g.top[0].p*100)} %${g.top[1]?` <span style="color:var(--muted)">(sinon ${esc(g.top[1].type)})</span>`:""}</p>`:""}
+   <div class="field"><span class="lbl">Rayon</span><div class="chips">${Object.entries(SECTIONS).map(([k,s])=>`<button class="chip" aria-pressed="${d.section===k}" data-dsec="${k}">${s.label}</button>`).join("")}</div></div>
+   <div class="field"><span class="lbl">Type</span><div class="chips">${sec.types.map(t=>`<button class="chip" aria-pressed="${d.type===t}" data-dtype="${esc(t)}">${esc(t)}</button>`).join("")}</div></div>
+   <div class="field"><label for="d-color">Couleur détectée</label><div class="colorrow"><input type="color" id="d-color" value="${d.color.hex}"><span><b>${esc(d.section==="bijoux"?(metal(d.color)||d.color.name):d.color.name)}</b><br><small style="color:var(--muted)">Touche le rond pour corriger</small></span></div></div>
+   ${d.section!=="maquillage"?`<div class="field"><span class="lbl">Pour quels moods ?${g&&g.moods.length?" · proposés par l'IA":""}</span>${moodChips(d.moods,"data-dmood")}<small style="color:var(--muted)">Laisse vide si la pièce va partout.</small></div>`:""}
+   <div class="field"><label for="d-note">Note</label><input type="text" id="d-note" value="${esc(d.note||"")}" placeholder="Marque, matière…"></div>
+   <div class="row" style="margin-top:18px"><button class="btn" data-act="savedraft" ${d.type?"":"disabled"}>Ranger dans le dressing</button><button class="btn ghost" data-act="cancel">Annuler</button></div>`)}
+async function startDraft(files,section){const list=[...files];if(!list.length)return;
+  if(list.length>1&&AI.ready){closeSheet();batchImport(list);return}
+  S.draft={queue:list.slice(1),section,busy:true};addSheet();await loadDraft(list[0])}
+async function loadDraft(file){try{S.draft.busy=true;S.draft.a=null;addSheet();const a=await analyzePhoto(file);if(!S.draft)return;
+  const g=a.guess;const t=g&&g.top[0].p>.2?g.top[0].type:null;
+  Object.assign(S.draft,{a,busy:false,prev:URL.createObjectURL(a.cut||a.img),color:a.color,type:t,section:t?SECTION_OF[t]:S.draft.section,moods:g?[...g.moods]:[],note:""});addSheet()}
+  catch(e){toast("Impossible de lire cette photo");closeSheet()}}
+async function saveNewItem(a,fields){const id=uid();await storeFiles(id,a);
+  const it={id,...fields,color:fields.color||a.color,hasCut:!!a.cut,emb:a.emb||null,created:Date.now()};await sPut("items",it);S.items.push(it);persistOnce();return it}
+let persisted=false;async function persistOnce(){if(persisted)return;persisted=true;try{await navigator.storage?.persist?.()}catch(_){}}
+async function batchImport(files){S.job={label:"Import IA",done:0,total:files.length,stop:false};render();let ok=0;
+  for(const f of files){if(S.job.stop)break;try{const a=await analyzePhoto(f);const g=a.guess;const t=g?g.top[0].type:"Haut";
+      await saveNewItem(a,{section:SECTION_OF[t],type:t,moods:g?g.moods:[],note:"",review:true,aiConf:g?Math.round(g.top[0].p*100):0});ok++}catch(_){}
+    S.job.done++;if(S.page!=="studio"||S.job.done%5===0)render();else{const j=$(".job");if(j)j.outerHTML=jobBar()}}
+  S.job=null;S.dressTab="review";S.tf=null;S.q="";S.aiHits=null;S.page="dressing";render();updateStorage();toast(`${ok} pièces importées · vérifie le classement`)}
+async function reanalyze(){const list=S.items.filter(i=>!i.demo&&!i.emb);if(!list.length)return;S.job={label:"Analyse IA",done:0,total:list.length,stop:false};render();
+  for(const it of list){if(S.job.stop)break;try{const img=await fGet(it.id+":img");if(img){const r=await AI.call("cut",img);if(r.cut){await fPut(it.id+":cut",r.cut);it.hasCut=true;it.nocut=false;
+      await fPut(it.id+":thumb",await shrink(r.cut,420,"image/jpeg","#ffffff",.8));await loadURL(it.id+":thumb")}
+      it.emb=await AI.call("embedImage",await fGet(it.id+":thumb"));delete it._ms;await sPut("items",it)}}catch(_){}
+    S.job.done++;const j=$(".job");if(j)j.outerHTML=jobBar()}
+  S.job=null;render();toast("Analyse terminée")}
+function itemSheet(it){S.open=it.id;const sec=SECTIONS[it.section];
+  openSheet(`<div class="preview checker"><img id="sheet-img" src="${wearSrc(it)}" alt="${esc(it.type)}"></div>
+  <h2 style="margin-top:14px">${esc(it.type)} <i style="color:var(--rose)">${esc(colorName(it))}</i></h2>${it.note?`<p>${esc(it.note)}</p>`:""}
+  ${it.review?`<div class="banner" style="margin-top:10px"><span>Classée par l'IA${it.aiConf?` (${it.aiConf} % sûre)`:""}. Corrige si besoin puis valide.</span><button class="btn small" data-act="validate">Valider</button></div>`:""}
+  ${WEARABLE.includes(it.section)?`<button class="btn wide" data-try="${it.id}" style="margin-top:12px">Essayer sur moi</button>`:""}
+  <div class="field"><span class="lbl">Rayon</span><div class="chips">${Object.entries(SECTIONS).map(([k,s])=>`<button class="chip" aria-pressed="${it.section===k}" data-isec="${k}">${s.label}</button>`).join("")}</div></div>
+  <div class="field"><span class="lbl">Type</span><div class="chips">${sec.types.map(t=>`<button class="chip" aria-pressed="${it.type===t}" data-itype="${esc(t)}">${esc(t)}</button>`).join("")}</div></div>
+  ${it.section!=="maquillage"?`<div class="field"><span class="lbl">Moods</span>${moodChips(it.moods||[],"data-imood")}</div>`:""}
+  <div class="field"><label for="i-color">Couleur</label><div class="colorrow"><input type="color" id="i-color" value="${it.color?.hex||"#cccccc"}"><span>${esc(colorName(it))}</span></div></div>
+  ${it.demo||!it.hasCut?"":`<label class="toggle" style="margin-top:14px"><input type="checkbox" id="i-nocut" ${it.nocut?"":"checked"}> Fond retiré pour l'essayage</label>`}
+  <div class="row" style="margin-top:18px" id="del-zone"><button class="btn ghost" data-act="close">Fermer</button><button class="btn ghost small" data-act="askdel">Supprimer</button></div>`)}
+
+/* ================= Glisser-déposer sur la photo ================= */
+let drag=null;
+document.addEventListener("pointerdown",e=>{const w=e.target.closest(".wear");if(!w)return;e.preventDefault();
+  const fig=$("#fig").getBoundingClientRect();const pi=+w.dataset.pi;const p=S.look.pieces[pi];const f=getFit(p);
+  drag={w,p,pi,fig,sx:e.clientX,sy:e.clientY,f0:{...f},f};try{w.setPointerCapture(e.pointerId)}catch(_){}
+  document.querySelectorAll(".wear.sel").forEach(x=>x.classList.remove("sel"));w.classList.add("sel")});
+document.addEventListener("pointermove",e=>{if(!drag)return;const f=drag.f;
+  f.x=Math.max(-10,Math.min(110,drag.f0.x+(e.clientX-drag.sx)/drag.fig.width*100));f.y=Math.max(-10,Math.min(110,drag.f0.y+(e.clientY-drag.sy)/drag.fig.height*100));
+  drag.w.style.left=f.x+"%";drag.w.style.top=f.y+"%"});
+document.addEventListener("pointerup",()=>{if(!drag)return;setFit(drag.p,{...drag.f});S.sel=drag.pi;drag=null;render()});
+document.addEventListener("wheel",e=>{const w=e.target.closest(".wear");if(!w)return;e.preventDefault();resize(+w.dataset.pi,e.deltaY<0?2:-2)},{passive:false});
+function resize(pi,dw){const p=S.look.pieces[pi];const f=getFit(p);f.w=Math.max(4,Math.min(120,f.w+dw));setFit(p,f);S.sel=pi;render()}
+
+/* ================= Événements ================= */
+async function removeIds(ids){for(const id of ids){await sDel("items",id);await deleteItemFiles(id)}S.items=S.items.filter(i=>!ids.has(i.id));
+  if(S.look){S.look.pieces=S.look.pieces.filter(p=>!ids.has(p.id));Object.keys(S.look.ranked||{}).forEach(k=>S.look.ranked[k]=S.look.ranked[k].filter(i=>!ids.has(i.id)));beauty(S.look)}S.sel=null}
+document.addEventListener("click",async e=>{const t=e.target.closest("[data-go],[data-mood],[data-act],[data-item],[data-try],[data-tab],[data-tf],[data-dsec],[data-dtype],[data-dmood],[data-imood],[data-isec],[data-itype],[data-close],[data-wear],[data-unfav],[data-swap],[data-rm],[data-sel],[data-size]");if(!t)return;
+  if(t.dataset.close){if(e.target===t)closeSheet();return}
+  const D=t.dataset;
+  if(D.go){if(D.go==="add"){S.draft=null;addSheet();return}S.page=D.go;closeSheet();render();scrollTo(0,0);if(D.go==="profil")updateStorage();return}
+  if(D.mood){S.mood=D.mood;S.look=generate(S.mood);S.sel=null;render();return}
+  if(D.tab){S.dressTab=D.tab;S.tf=null;S.q="";S.aiHits=null;S.limit=60;render();return}
+  if(D.tf!==undefined){S.tf=D.tf||null;S.limit=60;render();return}
+  if(D.try){tryItem(itemById(D.try));return}
+  if(D.item){itemSheet(itemById(D.item));const it=itemById(D.item);loadURL(it.id+(it.hasCut&&!it.nocut?":cut":":img")).then(u=>{const el=$("#sheet-img");if(u&&el)el.src=u});return}
+  if(D.swap!==undefined){swapPiece(+D.swap);return}
+  if(D.rm!==undefined){S.look.pieces.splice(+D.rm,1);S.sel=null;beauty(S.look);render();return}
+  if(D.sel!==undefined){S.sel=S.sel===+D.sel?null:+D.sel;render();return}
+  if(D.size){if(S.sel!=null)resize(S.sel,+D.size);return}
+  if(D.dsec){S.draft.section=D.dsec;S.draft.type=null;addSheet();return}
+  if(D.dtype){S.draft.type=D.dtype;addSheet();return}
+  if(D.dmood){const m=S.draft.moods,k=D.dmood;m.includes(k)?m.splice(m.indexOf(k),1):m.push(k);t.setAttribute("aria-pressed",m.includes(k));return}
+  if(D.imood){const it=itemById(S.open);it.moods=it.moods||[];const k=D.imood;it.moods.includes(k)?it.moods.splice(it.moods.indexOf(k),1):it.moods.push(k);t.setAttribute("aria-pressed",it.moods.includes(k));await sPut("items",it);return}
+  if(D.isec){const it=itemById(S.open);if(it.section!==D.isec){it.section=D.isec;it.type=SECTIONS[D.isec].types[0];await sPut("items",it);itemSheet(it);render()}return}
+  if(D.itype){const it=itemById(S.open);it.type=D.itype;await sPut("items",it);itemSheet(it);render();return}
+  if(D.wear){const l=S.looks.find(x=>x.id===D.wear);S.look={...JSON.parse(JSON.stringify(l)),ranked:{}};S.look.pieces=S.look.pieces.filter(p=>itemById(p.id));S.look.pieces.forEach(p=>{(S.look.ranked[p.role]=S.look.ranked[p.role]||[]).push(itemById(p.id))});
+    beauty(S.look);S.mood=l.mood;S.page="studio";S.sel=null;render();scrollTo(0,0);return}
+  if(D.unfav){await sDel("looks",D.unfav);S.looks=S.looks.filter(x=>x.id!==D.unfav);render();return}
+  const a=D.act;
+  if(a==="gen"){S.look=generate(S.mood);S.sel=null;render()}
+  else if(a==="more"){S.limit+=60;render()}
+  else if(a==="board"){S.board=!S.board;S.sel=null;render()}
+  else if(a==="mirror"){S.mirror=!S.mirror;render()}
+  else if(a==="desel"){S.sel=null;render()}
+  else if(a==="resetfit"){if(S.sel!=null){delete S.profile.fit[fitKey(S.look.pieces[S.sel])];kvSet("profile",S.profile);render()}}
+  else if(a==="resetall"){S.profile.fit={};await kvSet("profile",S.profile);toast("Positions réinitialisées");render()}
+  else if(a==="savelook"){const l={id:uid(),mood:S.look.mood,pieces:S.look.pieces.map(p=>({...p})),hair:S.look.hair,date:Date.now()};await sPut("looks",l);S.looks.push(l);toast("Look ajouté à tes favoris")}
+  else if(a==="cancel"||a==="close")closeSheet();
+  else if(a==="aistart"){AI.start().catch(()=>{})}
+  else if(a==="reanalyze"){reanalyze()}
+  else if(a==="stopjob"){if(S.job){S.job.stop=true;const j=$(".job");if(j)j.outerHTML=jobBar()}}
+  else if(a==="recutbody"){try{toast("L'IA détoure ta photo…");const r=await AI.call("cut",dataURLToBlob(S.profile.body));if(r.cut){S.profile.bodyCut=await blobToDataURL(r.cut);S.profile.cutBody=true;await kvSet("profile",S.profile);render();toast("Photo détourée")}}catch(_){toast("Le détourage a échoué")}}
+  else if(a==="validate"){const it=itemById(S.open);delete it.review;await sPut("items",it);closeSheet();render();toast("Pièce validée")}
+  else if(a==="savedraft"){const d=S.draft;if(!d.type)return;const note=$("#d-note")?.value||"";
+    const it=await saveNewItem(d.a,{section:d.section,type:d.type,color:d.color,moods:d.moods,note});try{URL.revokeObjectURL(d.prev)}catch(_){}
+    const q=d.queue||[];toast(it.type+" rangé");if(q.length){S.draft={queue:q.slice(1),section:d.section,busy:true};await loadDraft(q[0])}else{closeSheet();S.dressTab=it.section;S.tf=null;if(S.page!=="studio")S.page="dressing";render()}}
+  else if(a==="askdel"){$("#del-zone").innerHTML=`<span>Supprimer cette pièce ?</span><button class="btn danger small" data-act="del">Oui, supprimer</button><button class="btn ghost small" data-act="close">Non</button>`}
+  else if(a==="del"){const id=S.open;await removeIds(new Set([id]));closeSheet();render();toast("Pièce supprimée")}
+  else if(a==="cleardemo"){await removeIds(new Set(S.items.filter(i=>i.demo).map(i=>i.id)));render();toast("Exemples effacés")}
+  else if(a==="export")exportAll();
+});
+document.addEventListener("change",async e=>{const t=e.target;
+  if(t.id==="cam-in"||t.id==="gal-in"){await startDraft(t.files,S.dressTab&&S.dressTab!=="review"?S.dressTab:"vetements");return}
+  if(t.id==="d-color"){S.draft.color=colorInfo(t.value);addSheet();return}
+  if(t.id==="i-color"){const it=itemById(S.open);it.color=colorInfo(t.value);await sPut("items",it);itemSheet(it);render();return}
+  if(t.id==="i-nocut"){const it=itemById(S.open);it.nocut=!t.checked;await sPut("items",it);itemSheet(it);render();return}
+  if(t.id==="cutbody"){S.profile.cutBody=t.checked;await kvSet("profile",S.profile);render();return}
+  if(t.dataset.pphoto){const f=t.files[0];if(!f)return;try{const b=await shrink(f,t.dataset.pphoto==="body"?1400:900);S.profile[t.dataset.pphoto]=await blobToDataURL(b);
+      if(t.dataset.pphoto==="body"){S.profile.bodyCut=null;render();toast(AI.ready?"L'IA retire le fond…":"Je retire le fond…");
+        let c=null;if(AI.ready){try{c=(await AI.call("cut",b)).cut}catch(_){}}if(!c)c=await floodCut(b,900);S.profile.bodyCut=await blobToDataURL(c)}
+      await kvSet("profile",S.profile);render()}catch(_){toast("Impossible de lire cette photo")}return}
+  if(t.dataset.prof){S.profile[t.dataset.prof]=t.value;await kvSet("profile",S.profile);if(t.dataset.prof!=="name")render();return}
+  if(t.id==="imp"){const f=t.files[0];if(!f)return;importAll(f)}
+});
+let qT=null;
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset.prof==="name"){S.profile.name=t.value;kvSet("profile",S.profile);return}
+  if(t.id&&t.id.startsWith("q-")){S.q=t.value;S.aiHits=null;S.limit=60;const m=t.id.slice(2);const g=$("#grid-"+m);if(g)g.innerHTML=gridHTML(m);
+    clearTimeout(qT);if(AI.ready&&S.q.trim().length>=3)qT=setTimeout(()=>semanticSearch(S.q,m),450)}});
+async function semanticSearch(q,m){const withEmb=S.items.filter(i=>i.emb);if(!withEmb.length)return;try{const[te]=await AI.call("embedText",[toEnglish(q)]);if(S.q!==q)return;
+  const sc=withEmb.map(i=>({i,s:dot(i.emb,te)})).sort((a,b)=>b.s-a.s);const top=sc[0].s;
+  const words=q.toLowerCase().split(/\s+/).filter(Boolean);const textHit=i=>words.every(w=>(i.type+" "+colorName(i)+" "+(i.note||"")).toLowerCase().includes(w));
+  const ids=[...new Set([...S.items.filter(textHit).map(i=>i.id),...sc.filter(x=>x.s>top-.035).slice(0,40).map(x=>x.i.id)])];
+  S.aiHits=ids;const g=$("#grid-"+m);if(g)g.innerHTML=gridHTML(m)}catch(_){}}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#layer").innerHTML)closeSheet()});
+
+/* ================= Sauvegarde ================= */
+async function exportAll(){toast("Préparation de la sauvegarde…");const files={};
+  for(const it of S.items){if(it.demo)continue;for(const k of["img","cut"]){const b=await fGet(it.id+":"+k);if(b)files[it.id+":"+k]=await blobToDataURL(b)}}
+  const items=S.items.filter(i=>!i.demo).map(i=>{const o={...i};delete o._ms;if(o.emb)o.emb=Array.from(o.emb);return o});
+  const data=JSON.stringify({v:3,profile:S.profile,items,looks:S.looks,files});
+  const url=URL.createObjectURL(new Blob([data],{type:"application/json"}));const l=document.createElement("a");l.href=url;l.download="atelier-boucle-sauvegarde.json";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),8000);toast("Sauvegarde créée")}
+async function importAll(f){try{toast("Import en cours…");const j=JSON.parse(await f.text());const files=j.files||{};
+  for(const raw of j.items||[]){const it={...raw};if(it.emb)it.emb=Float32Array.from(it.emb);
+    if(typeof it.img==="string"){files[it.id+":img"]=it.img;if(it.cut)files[it.id+":cut"]=it.cut;delete it.img;delete it.cut;it.hasCut=!!files[it.id+":cut"]}
+    const img=files[it.id+":img"]?dataURLToBlob(files[it.id+":img"]):null;if(!img)continue;const cut=files[it.id+":cut"]?dataURLToBlob(files[it.id+":cut"]):null;
+    await storeFiles(it.id,{img,cut,thumb:await shrink(cut||img,420,"image/jpeg","#ffffff",.8)});it.hasCut=!!cut;await sPut("items",it)}
+  for(const l of j.looks||[])await sPut("looks",l);if(j.profile){S.profile={...S.profile,...j.profile,fit:{...S.profile.fit,...(j.profile.fit||{})}};await kvSet("profile",S.profile)}
+  S.items=await sAll("items");S.looks=await sAll("looks");await Promise.all(S.items.map(i=>loadURL(i.id+":thumb")));render();updateStorage();toast("Sauvegarde importée")}catch(_){toast("Ce fichier n'est pas une sauvegarde Atelier")}}
+
+/* ================= Démarrage ================= */
+async function migrate(){for(const it of S.items){let ch=false;
+  if(it.section==="accessoires"&&it.type==="Bijoux"){it.section="bijoux";it.type="Collier";ch=true}
+  if(typeof it.img==="string"){const img=dataURLToBlob(it.img);const cut=typeof it.cut==="string"?dataURLToBlob(it.cut):null;
+    await storeFiles(it.id,{img,cut,thumb:await shrink(cut||img,420,"image/jpeg","#ffffff",.8)});it.hasCut=!!cut;delete it.img;delete it.cut;ch=true}
+  if(ch)await sPut("items",it)}}
+(async()=>{try{await DB.open()}catch(_){useDB=false}
+  try{S.profile={curl:"3B",...(await kvGet("profile")||{})};S.profile.fit=S.profile.fit||{};S.items=await sAll("items");
+    if(!(await kvGet("seeded3"))){const old=new Set(S.items.filter(i=>i.demo).map(i=>i.id));for(const id of old){await sDel("items",id);await deleteItemFiles(id)}
+      await seedDemo();await kvSet("seeded3",true);S.items=await sAll("items")}
+    await migrate();S.looks=await sAll("looks")}catch(err){console.error(err);useDB=false;await seedDemo();S.items=await sAll("items")}
+  await Promise.all(S.items.map(i=>loadURL(i.id+":thumb")));
+  S.look=S.items.length?generate(S.mood):null;render();
+  if(!IN_CLAUDE&&await kvGet("aiEnabled").catch(()=>false))AI.start().catch(()=>{});
+  if("serviceWorker" in navigator&&location.protocol==="https:"&&!IN_CLAUDE)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+</script>
+</body>
+</html>
